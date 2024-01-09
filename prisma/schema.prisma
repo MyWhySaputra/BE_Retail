@@ -10,28 +10,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user {
+model kasir {
   id          Int       @id @default(autoincrement())
   name        String    @db.VarChar(255)
   email       String    @db.VarChar(100) @unique
   password    String    @db.VarChar(255)
-  role        Role      @default(USER)
   is_verified Boolean   @default(false)
   createAt    DateTime  @default(now())
   updateAt    DateTime  @updatedAt
   deletedAt   DateTime?
-  profile     profile[]
-  bank_accounts bankAccounts[]
-}
-
-enum Role {
-  USER
-  ADMIN
+  profile   profile[]
+  receipt   receipt[]
 }
 
 model profile {
   id              Int       @id @default(autoincrement())
-  user_id         Int       @unique
+  kasir_id        Int       @unique
   profile_picture String    @db.VarChar(255)
   identity_type   String    @db.VarChar(100)
   identity_number String    @db.VarChar(100)
@@ -39,31 +33,62 @@ model profile {
   createAt        DateTime  @default(now())
   updateAt        DateTime  @updatedAt
   deletedAt       DateTime?
-  user user @relation(fields: [user_id], references: [id])
+  kasir kasir @relation(fields: [kasir_id], references: [id])
 }
 
-model bankAccounts {
+model member {
+  id              Int       @id @default(autoincrement())
+  name            String    @db.VarChar(255)
+  identity_type   String    @db.VarChar(100)
+  identity_number String    @db.VarChar(100) @unique
+  address         String    @db.Text
+  total_point     Int       @db.Integer
+  createAt        DateTime  @default(now())
+  updateAt        DateTime  @updatedAt
+  deletedAt       DateTime?
+  receipt   receipt[]
+}
+
+model receipt {
   id                  Int       @id @default(autoincrement())
-  user_id             Int       
-  bank_name           String    @db.VarChar(100)
-  bank_account_number Int       @db.Integer @unique
-  balance             Int       @db.Integer
+  transaction_id      Int       @unique
+  total_price         Int       @db.Integer
+  total_discount      Int       @db.Integer
+  cash                Int       @db.Integer
+  PPN                 Int       @db.Integer
+  cash_refund         Int       @db.Integer
+  date                DateTime  
+  point               Int       @db.Integer
+  member_id           Int       @db.Integer
+  kasir_id            Int       @db.Integer
   createAt            DateTime  @default(now())
   updateAt            DateTime  @updatedAt
   deletedAt           DateTime?
-  user user @relation(fields: [user_id], references: [id])
-  source       transactions[] @relation("transactionSourceAccount")
-  destination  transactions[] @relation("transactionDestinationAccount")
+  kasir kasir @relation(fields: [kasir_id], references: [id])
+  member member @relation(fields: [member_id], references: [id])
+  transaction transaction @relation(fields: [transaction_id], references: [transaction_id])
 }
 
-model transactions {
+model transaction {
   id                      Int       @id @default(autoincrement())
-  source_bank_number      Int       @db.Integer
-  destination_bank_number Int       @db.Integer
-  amount                  Int       @db.Integer
+  transaction_id          Int       @unique
+  items_id                Int       @db.Integer
+  quantity                Int       @db.Integer
+  sub_total_price         Int       @db.Integer
+  discount                Int       @db.Integer
   createAt                DateTime  @default(now())
   updateAt                DateTime  @updatedAt
   deletedAt               DateTime?
-  bank_account_source      bankAccounts @relation(name: "transactionSourceAccount", fields: [source_bank_number], references: [bank_account_number])
-  bank_account_destination bankAccounts @relation(name: "transactionDestinationAccount", fields: [destination_bank_number], references: [bank_account_number])
+  receipt   receipt[]
+  items items @relation(fields: [items_id], references: [id])
+}
+
+model items {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  price       Int       @db.Integer
+  createAt    DateTime  @default(now())
+  updateAt    DateTime  @updatedAt
+  deletedAt   DateTime?
+  transaction   transaction[]
 }
