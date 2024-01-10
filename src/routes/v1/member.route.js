@@ -5,23 +5,18 @@ const {
   Get,
   Update,
   Delete,
-} = require("../../controller/user.controller");
-const {
-  Auth,
-  CheckRegister,
-  CheckUpdate,
-  CheckDelete,
-} = require("../../middleware/middleware");
-
-const multer = require("multer")();
+} = require("../../controller/member.controller");
+const { Auth } = require("../../middleware/middleware");
 
 /**
  * @swagger
- * /api/v2/users:
+ * /api/v1/member:
  *   post:
+ *     security:
+ *      - bearerAuth: []
  *     tags:
- *      - "User"
- *     summary: example to register user
+ *      - "Member"
+ *     summary: example to register Member
  *     requestBody:
  *        required: true
  *        content:
@@ -52,21 +47,16 @@ const multer = require("multer")();
  *       500:
  *         description: Internal server error
  */
-router.post(
-  "/users/",
-  CheckRegister,
-  multer.single("profile_picture"),
-  Register
-);
+router.post("/member/", Auth, Register);
 
 /**
  * @swagger
- * /api/v2/users:
+ * /api/v1/member:
  *   get:
  *     security:
  *      - bearerAuth: []
  *     tags:
- *      - "User"
+ *      - "Member"
  *     summary: Check your id
  *     responses:
  *       200:
@@ -74,17 +64,17 @@ router.post(
  *       404:
  *         description: Not found
  */
-router.get("/users/", Auth, Get);
+router.get("/member/", Auth, Get);
 
 /**
  * @swagger
- * /api/v2/users:
+ * /api/v1/member:
  *   put:
  *     security:
  *      - bearerAuth: []
  *     tags:
- *      - "User"
- *     summary: Update user
+ *      - "Member"
+ *     summary: Update Member
  *     requestBody:
  *        required: true
  *        content:
@@ -113,23 +103,17 @@ router.get("/users/", Auth, Get);
  *       400:
  *         description: Bad request
  */
-router.put(
-  "/users/",
-  Auth,
-  CheckUpdate,
-  multer.single("profile_picture"),
-  Update
-);
+router.put("/member/", Auth, Update);
 
 /**
  * @swagger
- * /api/v2/users:
+ * /api/v1/member:
  *   delete:
  *     security:
  *      - bearerAuth: []
  *     tags:
- *      - "User"
- *     summary: Delete user
+ *      - "Member"
+ *     summary: Delete Member
  *     requestBody:
  *        required: true
  *        content:
@@ -145,6 +129,6 @@ router.put(
  *       404:
  *         description: Not found
  */
-router.delete("/users/", Auth, CheckDelete, Delete);
+router.delete("/member/", Auth, Delete);
 
 module.exports = router;
