@@ -71,6 +71,8 @@ async function Get(req, res) {
   if (identity_number) payload.identity_number = identity_number;
   if (address) payload.address = address;
   if (total_point) payload.total_point = total_point;
+  
+  payload.deletedAt = null;
 
   try {
     const skip = (page - 1) * limit;
