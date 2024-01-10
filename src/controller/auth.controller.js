@@ -110,13 +110,13 @@ async function login(req, res) {
   try {
     const { email, password } = req.body;
 
-    const checkUser = await prisma.user.findUnique({
+    const checkKasir = await prisma.kasir.findUnique({
       where: {
         email: email,
       },
     });
 
-    if (checkUser === null) {
+    if (checkKasir === null || checkKasir.deletedAt !== null) {
       let resp = ResponseTemplate(
         null,
         "email is not found or incorrect",
@@ -127,13 +127,13 @@ async function login(req, res) {
       return;
     }
 
-    if (!checkUser.is_verified) {
+    if (!checkKasir.is_verified) {
       let resp = ResponseTemplate(null, "email is not verified", null, 400);
       res.status(400).json(resp);
       return;
     }
 
-    const checkPassword = await ComparePassword(password, checkUser.password);
+    const checkPassword = await ComparePassword(password, checkKasir.password);
 
     if (!checkPassword) {
       let resp = ResponseTemplate(null, "password is not correct", null, 400);
@@ -143,9 +143,8 @@ async function login(req, res) {
 
     const token = jwt.sign(
       {
-        id: checkUser.id,
-        email: checkUser.email,
-        role: checkUser.role,
+        id: checkKasir.id,
+        email: checkKasir.email,
       },
       process.env.SECRET_KEY
     );
@@ -168,11 +167,11 @@ async function verifyEmail(req, res) {
   const { token } = req.query;
 
   try {
-    const user = await jwt.verify(token, process.env.SECRET_KEY);
+    const kasir = await jwt.verify(token, process.env.SECRET_KEY);
 
-    await prisma.user.update({
+    await prisma.kasir.update({
       where: {
-        email: user.email,
+        email: kasir.email,
       },
       data: {
         is_verified: true,
@@ -198,13 +197,13 @@ async function forgetPassword(req, res) {
   const { email } = req.body;
 
   try {
-    const checkUser = await prisma.user.findUnique({
+    const checkKasir = await prisma.kasir.findUnique({
       where: {
         email: email,
       },
     });
 
-    if (checkUser === null) {
+    if (checkKasir === null) {
       let resp = ResponseTemplate(null, "email not found", null, 400);
       res.status(400).json(resp);
       return;
@@ -212,7 +211,7 @@ async function forgetPassword(req, res) {
 
     const token = jwt.sign(
       {
-        email: checkUser.email,
+        email: checkKasir.email,
       },
       process.env.SECRET_KEY,
       { expiresIn: "1h" }
@@ -222,7 +221,7 @@ async function forgetPassword(req, res) {
       from: process.env.EMAIL_SMTP,
       to: email,
       subject: "Reset your password",
-      html: `<a href="${process.env.BASE_URL}/api/v2/auth/reset-password?token=${token}">Click here to reset password</a>`,
+      html: `<a href="${process.env.BASE_URL}/api/v1/auth/reset-password?token=${token}">Click here to reset password</a>`,
     });
 
     let resp = ResponseTemplate(null, "check your email", null, 200);
@@ -241,10 +240,10 @@ async function resetPassword(req, res) {
   const HashNewPass = await HashPassword(newPassword);
 
   try {
-    const user = await jwt.verify(token, process.env.SECRET_KEY);
+    const kasir = await jwt.verify(token, process.env.SECRET_KEY);
 
-    await prisma.user.update({
-      where: { email: user.email },
+    await prisma.kasir.update({
+      where: { email: kasir.email },
       data: {
         password: HashNewPass,
       },

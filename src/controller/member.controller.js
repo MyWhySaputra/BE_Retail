@@ -70,8 +70,8 @@ async function Get(req, res) {
   if (identity_type) payload.identity_type = identity_type;
   if (identity_number) payload.identity_number = identity_number;
   if (address) payload.address = address;
-  if (total_point) payload.total_point = total_point;
-  
+  if (total_point) payload.total_point = Number(total_point);
+
   payload.deletedAt = null;
 
   try {
@@ -150,7 +150,7 @@ async function Update(req, res) {
   if (identity_type) payload.identity_type = identity_type;
   if (identity_number) payload.identity_number = identity_number;
   if (address) payload.address = address;
-  if (total_point) payload.total_point = total_point;
+  if (total_point) payload.total_point = Number(total_point);
 
   try {
 
@@ -185,6 +185,18 @@ async function Delete(req, res) {
   const { id } = req.params;
 
   try {
+
+    const checkMember = await prisma.member.findUnique({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    if (checkMember === null) {
+      let resp = ResponseTemplate(null, "data not found", null, 404);
+      res.status(404).json(resp);
+      return;
+    }
 
     const member = await prisma.member.update({
       where: {

@@ -57,7 +57,38 @@ router.post("/member/", Auth, Register);
  *      - bearerAuth: []
  *     tags:
  *      - "Member"
- *     summary: Check your id
+ *     summary: Get All Member
+ *     parameters:
+ *       - in: query
+ *         name: name
+ *         required: false
+ *         description: The name of Member
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: identity_type
+ *         required: false
+ *         description: The identity_type of Member
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: identity_number
+ *         required: false
+ *         description: The identity_number of Member
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: address
+ *         required: false
+ *         description: The address of Member
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: total_point
+ *         required: false
+ *         description: The total_point of Member
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Successful response
@@ -68,13 +99,20 @@ router.get("/member/", Auth, Get);
 
 /**
  * @swagger
- * /api/v1/member:
+ * /api/v1/member/{id}:
  *   put:
  *     security:
  *      - bearerAuth: []
  *     tags:
  *      - "Member"
  *     summary: Update Member
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The id of Member
+ *         schema:
+ *           type: string
  *     requestBody:
  *        required: true
  *        content:
@@ -84,18 +122,16 @@ router.get("/member/", Auth, Get);
  *              properties:
  *                name:
  *                  type: string
- *                email:
- *                  type: string
- *                password:
- *                  type: string
  *                profile_picture:
  *                  type: string
  *                  format: binary
  *                identity_type:
  *                  type: string
  *                identity_number:
- *                  type: integer
+ *                  type: string
  *                address:
+ *                  type: string
+ *                total_point:
  *                  type: string
  *     responses:
  *       200:
@@ -103,32 +139,30 @@ router.get("/member/", Auth, Get);
  *       400:
  *         description: Bad request
  */
-router.put("/member/", Auth, Update);
+router.put("/member/:id", Auth, Update);
 
 /**
  * @swagger
- * /api/v1/member:
+ * /api/v1/member/{id}:
  *   delete:
  *     security:
  *      - bearerAuth: []
  *     tags:
  *      - "Member"
- *     summary: Delete Member
- *     requestBody:
- *        required: true
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              properties:
- *                email:
- *                  type: string
+ *     summary: Delete Member (Soft Delete)
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The id of Member
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Successful response
  *       404:
  *         description: Not found
  */
-router.delete("/member/", Auth, Delete);
+router.delete("/member/:id", Auth, Delete);
 
 module.exports = router;
