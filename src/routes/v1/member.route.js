@@ -1,16 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const {
-    Register,
-    Get,
-    Update,
-    Delete,
+  Register,
+  Get,
+  Update,
+  Delete,
 } = require("../../controller/user.controller");
 const {
-    Auth,
-    CheckRegister,
-    CheckUpdate,
-    CheckDelete,
+  Auth,
+  CheckRegister,
+  CheckUpdate,
+  CheckDelete,
 } = require("../../middleware/middleware");
 
 const multer = require("multer")();
@@ -53,10 +53,10 @@ const multer = require("multer")();
  *         description: Internal server error
  */
 router.post(
-    "/users/",
-    CheckRegister,
-    multer.single("profile_picture"),
-    Register
+  "/users/",
+  CheckRegister,
+  multer.single("profile_picture"),
+  Register
 );
 
 /**
@@ -114,11 +114,11 @@ router.get("/users/", Auth, Get);
  *         description: Bad request
  */
 router.put(
-    "/users/",
-    Auth,
-    CheckUpdate,
-    multer.single("profile_picture"),
-    Update
+  "/users/",
+  Auth,
+  CheckUpdate,
+  multer.single("profile_picture"),
+  Update
 );
 
 /**

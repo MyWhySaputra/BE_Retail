@@ -2,9 +2,9 @@ const swaggerDefinition = {
     swaggerDefinition: {
         openapi: '3.0.0',
         info: {
-            title: 'Node Bank System',
+            title: 'Backend Retail API',
             version: '1.0.0',
-            description: 'Build Bank System with NodeJS and ExpressJS',
+            description: 'Backend Retail API Documentation',
         },
         servers: [
             {
@@ -28,11 +28,11 @@ const swaggerDefinition = {
         }
     },
     apis: [
-        './src/routes/v2/auth.route.js',
-        './src/routes/v2/admin.route.js',
-        './src/routes/v2/user.route.js',
-        './src/routes/v2/bank.account.route.js',
-        './src/routes/v2/transaction.route.js',
+        './src/routes/v1/auth.route.js',
+        './src/routes/v1/member.route.js',
+        './src/routes/v1/items.route.js',
+        './src/routes/v1/transaction.route.js',
+        './src/routes/v1/receipt.route.js',
     ],
 
 }
