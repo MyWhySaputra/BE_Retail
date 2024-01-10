@@ -1,10 +1,6 @@
 const { ResponseTemplate } = require("../helper/template.helper");
-const { HashPassword } = require("../helper/hash_pass_helper");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const imagekit = require("../lib/imagekit");
-const transporter = require("../lib/nodemailer");
-var jwt = require("jsonwebtoken");
 
 async function Register(req, res) {
   const { name, identity_type, identity_number, address } =
