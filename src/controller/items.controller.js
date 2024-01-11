@@ -3,47 +3,26 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 async function Register(req, res) {
-  const { name, identity_type, identity_number, address } =
-    req.body;
-  
-  const total_point = 0;
+  const { name, price } = req.body;
 
   const payload = {
     name: name,
-    identity_type: identity_type,
-    identity_number: identity_number,
-    address: address,
-    total_point: total_point,
+    price: Number(price),
   };
 
-  if (req.body.identity_type !== "KTP" && req.body.identity_type !== "SIM") {
-    let resp = ResponseTemplate(
-      null,
-      "identity type must be KTP or SIM",
-      null,
-      404
-    );
-    res.status(404).json(resp);
-    return;
-  }
-
   try {
-
-    const member = await prisma.member.create({
+    const items = await prisma.items.create({
       data: payload,
       select: {
         id: true,
         name: true,
-        identity_type: true,
-        identity_number: true,
-        address: true,
-        total_point: true,
+        price: true,
         created_at: true,
         updated_at: true,
-      }
+      },
     });
 
-    let resp = ResponseTemplate(member, "success", null, 200);
+    let resp = ResponseTemplate(items, "success", null, 200);
     res.status(200).json(resp);
     return;
   } catch (error) {
@@ -56,10 +35,7 @@ async function Register(req, res) {
 async function Get(req, res) {
   const {
     name,
-    identity_type,
-    identity_number,
-    address,
-    total_point,
+    price,
     page = 1,
     limit = 10,
   } = req.query;
@@ -67,10 +43,7 @@ async function Get(req, res) {
   const payload = {};
 
   if (name) payload.name = name;
-  if (identity_type) payload.identity_type = identity_type;
-  if (identity_number) payload.identity_number = identity_number;
-  if (address) payload.address = address;
-  if (total_point) payload.total_point = Number(total_point);
+  if (price) payload.price = Number(price);
 
   payload.deletedAt = null;
 
@@ -78,12 +51,12 @@ async function Get(req, res) {
     const skip = (page - 1) * limit;
 
     //informasi total data keseluruhan
-    const resultCount = await prisma.member.count(); // integer jumlah total data user
+    const resultCount = await prisma.items.count(); // integer jumlah total data user
 
     //generated total page
     const totalPage = Math.ceil(resultCount / limit);
 
-    const members = await prisma.member.findMany({
+    const items = await prisma.items.findMany({
       //take : 10,
       take: parseInt(limit),
       //skip : 10
@@ -92,10 +65,7 @@ async function Get(req, res) {
       select: {
         id: true,
         name: true,
-        identity_type: true,
-        identity_number: true,
-        address: true,
-        total_point: true,
+        price: true,
         created_at: true,
         updated_at: true,
       },
@@ -105,13 +75,13 @@ async function Get(req, res) {
       current_page: page - 0, // ini - 0 merubah menjadi integer
       total_page: totalPage,
       total_data: resultCount,
-      data: members,
+      data: items,
     };
-    const cekMember = (objectName) => {
+    const cekItems = (objectName) => {
       return Object.keys(objectName).length === 0;
     };
 
-    if (cekMember(members) === true) {
+    if (cekItems(items) === true) {
       let resp = ResponseTemplate(null, "data not found", null, 404);
       res.status(404).json(resp);
       return;
@@ -128,33 +98,23 @@ async function Get(req, res) {
 }
 
 async function Update(req, res) {
-  const { name, identity_type, identity_number, address, total_point } =
+  const { name, price } =
     req.body;
   const { id } = req.params;
 
   const payload = {};
 
-  if (
-    !name &&
-    !identity_type &&
-    !identity_number &&
-    !address &&
-    !total_point
-  ) {
+  if (!name && !price) {
     let resp = ResponseTemplate(null, "bad request", null, 400);
     res.status(400).json(resp);
     return;
   }
 
   if (name) payload.name = name;
-  if (identity_type) payload.identity_type = identity_type;
-  if (identity_number) payload.identity_number = identity_number;
-  if (address) payload.address = address;
-  if (total_point) payload.total_point = Number(total_point);
+  if (price) payload.price = Number(price);
 
   try {
-
-    const members = await prisma.member.update({
+    const items = await prisma.items.update({
       where: {
         id: Number(id),
       },
@@ -162,16 +122,13 @@ async function Update(req, res) {
       select: {
         id: true,
         name: true,
-        identity_type: true,
-        identity_number: true,
-        address: true,
-        total_point: true,
+        price: true,
         created_at: true,
         updated_at: true,
       },
     });
 
-    let resp = ResponseTemplate(members, "success", null, 200);
+    let resp = ResponseTemplate(items, "success", null, 200);
     res.status(200).json(resp);
     return;
   } catch (error) {
@@ -185,20 +142,19 @@ async function Delete(req, res) {
   const { id } = req.params;
 
   try {
-
-    const checkMember = await prisma.member.findUnique({
+    const checkItems = await prisma.items.findUnique({
       where: {
         id: Number(id),
       },
     });
 
-    if (checkMember === null) {
+    if (checkItems === null) {
       let resp = ResponseTemplate(null, "data not found", null, 404);
       res.status(404).json(resp);
       return;
     }
 
-    const member = await prisma.member.update({
+    const items = await prisma.items.update({
       where: {
         id: Number(id),
       },
@@ -208,15 +164,12 @@ async function Delete(req, res) {
       select: {
         id: true,
         name: true,
-        identity_type: true,
-        identity_number: true,
-        address: true,
-        total_point: true,
+        price: true,
         deletedAt: true,
-      }
+      },
     });
 
-    let resp = ResponseTemplate(member, "delete success", null, 200);
+    let resp = ResponseTemplate(items, "delete success", null, 200);
     res.status(200).json(resp);
     return;
   } catch (error) {

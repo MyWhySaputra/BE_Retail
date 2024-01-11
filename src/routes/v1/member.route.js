@@ -20,24 +20,19 @@ const { Auth } = require("../../middleware/middleware");
  *     requestBody:
  *        required: true
  *        content:
- *          multipart/form-data:
+ *          application/json:
  *            schema:
  *              type: object
  *              properties:
  *                name:
  *                  type: string
- *                email:
- *                  type: string
- *                password:
- *                  type: string
- *                profile_picture:
- *                  type: string
- *                  format: binary
  *                identity_type:
  *                  type: string
  *                identity_number:
- *                  type: integer
+ *                  type: string
  *                address:
+ *                  type: string
+ *                total_point:
  *                  type: string
  *     responses:
  *       200:
@@ -116,15 +111,12 @@ router.get("/member/", Auth, Get);
  *     requestBody:
  *        required: true
  *        content:
- *          multipart/form-data:
+ *          application/json:
  *            schema:
  *              type: object
  *              properties:
  *                name:
  *                  type: string
- *                profile_picture:
- *                  type: string
- *                  format: binary
  *                identity_type:
  *                  type: string
  *                identity_number:

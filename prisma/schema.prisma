@@ -66,12 +66,12 @@ model receipt {
   deletedAt           DateTime?
   kasir kasir @relation(fields: [kasir_id], references: [id])
   member member @relation(fields: [member_id], references: [id])
-  transaction transaction @relation(fields: [transaction_id], references: [transaction_id])
+  transaction transaction[]
 }
 
 model transaction {
   id                      Int       @id @default(autoincrement())
-  transaction_id          Int       @unique
+  transaction_id          Int       
   items_id                Int       @db.Integer
   quantity                Int       @db.Integer
   sub_total_price         Int       @db.Integer
@@ -79,7 +79,7 @@ model transaction {
   createAt                DateTime  @default(now())
   updateAt                DateTime  @updatedAt
   deletedAt               DateTime?
-  receipt   receipt[]
+  receipt receipt @relation(fields: [transaction_id], references: [transaction_id])
   items items @relation(fields: [items_id], references: [id])
 }
 

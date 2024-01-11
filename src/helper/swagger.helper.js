@@ -29,6 +29,7 @@ const swaggerDefinition = {
     },
     apis: [
         './src/routes/v1/auth.route.js',
+        './src/routes/v1/kasir.route.js',
         './src/routes/v1/member.route.js',
         './src/routes/v1/items.route.js',
         './src/routes/v1/transaction.route.js',
