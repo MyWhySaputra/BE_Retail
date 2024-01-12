@@ -1,29 +1,29 @@
 const express = require("express");
 const router = express.Router();
 const {
-    Insert,
-    Get,
-    AdminGet,
-    AdminUpdate,
+  Create,
+  Get,
+  Update,
+  Delete,
 } = require("../../controller/transaction.controller");
-const {
-    Auth,
-    Admin,
-    CheckTransactionInsert,
-    CheckTransactionGet,
-    CheckBankAccountGetAdmin,
-    CheckTransactionUpdateAdmin,
-} = require("../../middleware/middleware");
+const { Auth } = require("../../middleware/middleware");
 
 /**
  * @swagger
- * /api/v2/transactions:
+ * /api/v1/transaction/{transaction_id}:
  *   post:
  *     security:
  *      - bearerAuth: []
  *     tags:
  *      - "Transaction"
- *     summary: example to create transaction
+ *     summary: example to register Transaction
+ *     parameters:
+ *       - in: path
+ *         name: transaction_id
+ *         required: true
+ *         description: The transaction_id of Transaction
+ *         schema:
+ *           type: string
  *     requestBody:
  *        required: true
  *        content:
@@ -31,96 +31,86 @@ const {
  *            schema:
  *              type: object
  *              properties:
- *                source_account_id:
- *                  type: integer
- *                destination_account_id:
- *                  type: integer
- *                amount:
- *                  type: integer
+ *                item_id:
+ *                  type: string
+ *                quantity:
+ *                  type: string
+ *                discount:
+ *                  type: string
  *     responses:
  *       200:
  *         description: Successful response
+ *       404:
+ *         description: Not found
+ *       500:
+ *         description: Internal server error
  */
-router.post("/transactions/", Auth, CheckTransactionInsert, Insert);
+router.post("/transaction/:transaction_id", Auth, Create);
 
 /**
  * @swagger
- * /api/v2/transactions:
+ * /api/v1/transaction/{transaction_id}:
  *   get:
  *     security:
  *      - bearerAuth: []
  *     tags:
  *      - "Transaction"
- *     summary: Get all your transactions
+ *     summary: Get All Transaction
  *     parameters:
- *       - in: query
- *         name: source_bank_number
- *         required: false
- *         description: The ID of source_account
+ *       - in: path
+ *         name: transaction_id
+ *         required: true
+ *         description: The transaction_id of Transaction
  *         schema:
- *           type: integer
+ *           type: string
  *       - in: query
- *         name: destination_bank_number
+ *         name: item_id
  *         required: false
- *         description: The ID of destination_account
+ *         description: The item_id of Transaction
  *         schema:
- *           type: integer
+ *           type: string
+ *       - in: query
+ *         name: quantity
+ *         required: false
+ *         description: The quantity of Transaction
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: discount
+ *         required: false
+ *         description: The discount of Transaction
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: sub_total_price
+ *         required: false
+ *         description: The sub_total_price of Transaction
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Successful response
+ *       404:
+ *         description: Not found
  */
-router.get("/transactions/", Auth, CheckTransactionGet, Get);
+router.get("/transaction/:transaction_id", Auth, Get);
 
 /**
  * @swagger
- * /api/v2/transactions/admin:
- *   get:
- *     security:
- *      - bearerAuth: []
- *     tags:
- *      - "Transaction"
- *     summary: Get all transactions (ADMIN ONLY)
- *     parameters:
- *       - in: query
- *         name: source_bank_number
- *         required: false
- *         description: The ID of source_account
- *         schema:
- *           type: integer
- *       - in: query
- *         name: destination_bank_number
- *         required: false
- *         description: The ID of destination_account
- *         schema:
- *           type: integer
- *       - in: query
- *         name: amount
- *         required: false
- *         description: The amount of bank account
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Successful response
- */
-router.get("/transactions/admin/", Auth, Admin, CheckBankAccountGetAdmin, AdminGet);
-
-/**
- * @swagger
- * /api/v2/transactions/admin:
+ * /api/v1/transaction/{id}:
  *   put:
  *     security:
  *      - bearerAuth: []
  *     tags:
  *      - "Transaction"
- *     summary: update transactions (ADMIN ONLY)
+ *     summary: Update Transaction
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: The ID of transaction
+ *         description: The id of Transaction
  *         schema:
- *           type: integer
+ *           type: string
  *     requestBody:
  *        required: true
  *        content:
@@ -128,16 +118,46 @@ router.get("/transactions/admin/", Auth, Admin, CheckBankAccountGetAdmin, AdminG
  *            schema:
  *              type: object
  *              properties:
- *                source_bank_number:
- *                  type: integer
- *                destination_bank_number:
- *                  type: integer
- *                amount:
- *                  type: integer
+ *                transaction_id:
+ *                  type: string
+ *                item_id:
+ *                  type: string
+ *                quantity:
+ *                  type: string
+ *                discount:
+ *                  type: string
+ *                sub_total_price:
+ *                  type: string
  *     responses:
  *       200:
  *         description: Successful response
+ *       400:
+ *         description: Bad request
  */
-router.put("/transactions/admin/:id", Auth, Admin, CheckTransactionUpdateAdmin, AdminUpdate);
+router.put("/transaction/:id", Auth, Update);
+
+/**
+ * @swagger
+ * /api/v1/transaction/{id}:
+ *   delete:
+ *     security:
+ *      - bearerAuth: []
+ *     tags:
+ *      - "Transaction"
+ *     summary: Delete Transaction (Soft Delete)
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The id of Transaction
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *       404:
+ *         description: Not found
+ */
+router.delete("/transaction/:id", Auth, Delete);
 
 module.exports = router;

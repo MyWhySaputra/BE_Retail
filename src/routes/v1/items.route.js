@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {
-  Register,
+  Create,
   Get,
   Update,
   Delete,
@@ -36,7 +36,7 @@ const { Auth } = require("../../middleware/middleware");
  *       500:
  *         description: Internal server error
  */
-router.post("/items/", Auth, Register);
+router.post("/items/", Auth, Create);
 
 /**
  * @swagger

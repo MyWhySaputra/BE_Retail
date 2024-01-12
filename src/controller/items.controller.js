@@ -2,7 +2,7 @@ const { ResponseTemplate } = require("../helper/template.helper");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-async function Register(req, res) {
+async function Create(req, res) {
   const { name, price } = req.body;
 
   const payload = {
@@ -180,7 +180,7 @@ async function Delete(req, res) {
 }
 
 module.exports = {
-  Register,
+  Create,
   Get,
   Update,
   Delete,
