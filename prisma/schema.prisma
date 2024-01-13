@@ -53,19 +53,17 @@ model receipt {
   id                  Int       @id @default(autoincrement())
   transaction_id      Int       @unique
   total_price         Int       @db.Integer
-  total_discount      Int       @db.Integer
   cash                Int       @db.Integer
-  PPN                 Int       @db.Integer
   cash_refund         Int       @db.Integer
   date                DateTime  
   point               Int       @db.Integer
-  member_id           Int       @db.Integer
+  member_id           Int?       @db.Integer
   kasir_id            Int       @db.Integer
   createAt            DateTime  @default(now())
   updateAt            DateTime  @updatedAt
   deletedAt           DateTime?
   kasir kasir @relation(fields: [kasir_id], references: [id])
-  member member @relation(fields: [member_id], references: [id])
+  member member? @relation(fields: [member_id], references: [id])
   transaction transaction[]
 }
 

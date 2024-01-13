@@ -2,7 +2,7 @@ const { ResponseTemplate } = require("../helper/template.helper");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-async function Create(req, res) {
+async function Insert(req, res) {
   const { item_id, quantity, discount } = req.body;
 
   const { transaction_id } = req.params;
@@ -216,7 +216,7 @@ async function Delete(req, res) {
 }
 
 module.exports = {
-  Create,
+  Insert,
   Get,
   Update,
   Delete,

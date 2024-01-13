@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {
-  Create,
+  Insert,
   Get,
   Update,
   Delete,
@@ -45,7 +45,7 @@ const { Auth } = require("../../middleware/middleware");
  *       500:
  *         description: Internal server error
  */
-router.post("/transaction/:transaction_id", Auth, Create);
+router.post("/transaction/:transaction_id", Auth, Insert);
 
 /**
  * @swagger
