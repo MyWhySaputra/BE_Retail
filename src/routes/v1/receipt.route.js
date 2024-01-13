@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {
-  Register,
+  Insert,
   Get,
   Update,
   Delete,
@@ -10,13 +10,13 @@ const { Auth } = require("../../middleware/middleware");
 
 /**
  * @swagger
- * /api/v1/member:
+ * /api/v1/receipt:
  *   post:
  *     security:
  *      - bearerAuth: []
  *     tags:
- *      - "Member"
- *     summary: example to register Member
+ *      - "Receipt"
+ *     summary: example to insert Receipt
  *     requestBody:
  *        required: true
  *        content:
@@ -24,15 +24,11 @@ const { Auth } = require("../../middleware/middleware");
  *            schema:
  *              type: object
  *              properties:
- *                name:
+ *                transaction_id:
  *                  type: string
- *                identity_type:
+ *                cash:
  *                  type: string
- *                identity_number:
- *                  type: string
- *                address:
- *                  type: string
- *                total_point:
+ *                member_id:
  *                  type: string
  *     responses:
  *       200:
@@ -42,46 +38,64 @@ const { Auth } = require("../../middleware/middleware");
  *       500:
  *         description: Internal server error
  */
-router.post("/member/", Auth, Register);
+router.post("/receipt/", Auth, Insert);
 
 /**
  * @swagger
- * /api/v1/member:
+ * /api/v1/receipt:
  *   get:
  *     security:
  *      - bearerAuth: []
  *     tags:
- *      - "Member"
- *     summary: Get All Member
+ *      - "Receipt"
+ *     summary: Get All Receipt
  *     parameters:
  *       - in: query
- *         name: name
+ *         name: transaction_id
  *         required: false
- *         description: The name of Member
+ *         description: The transaction_id of Receipt
  *         schema:
  *           type: string
  *       - in: query
- *         name: identity_type
+ *         name: total_price
  *         required: false
- *         description: The identity_type of Member
+ *         description: The total_price of Receipt
  *         schema:
  *           type: string
  *       - in: query
- *         name: identity_number
+ *         name: cash
  *         required: false
- *         description: The identity_number of Member
+ *         description: The cash of Receipt
  *         schema:
  *           type: string
  *       - in: query
- *         name: address
+ *         name: cash_refund
  *         required: false
- *         description: The address of Member
+ *         description: The cash_refund of Receipt
  *         schema:
  *           type: string
  *       - in: query
- *         name: total_point
+ *         name: date
  *         required: false
- *         description: The total_point of Member
+ *         description: The date of Receipt
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: point
+ *         required: false
+ *         description: The point of Receipt
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: member_id
+ *         required: false
+ *         description: The member_id of Receipt
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: kasir_id
+ *         required: false
+ *         description: The kasir_id of Receipt
  *         schema:
  *           type: string
  *     responses:
@@ -90,22 +104,22 @@ router.post("/member/", Auth, Register);
  *       404:
  *         description: Not found
  */
-router.get("/member/", Auth, Get);
+router.get("/receipt/", Auth, Get);
 
 /**
  * @swagger
- * /api/v1/member/{id}:
+ * /api/v1/receipt/{id}:
  *   put:
  *     security:
  *      - bearerAuth: []
  *     tags:
- *      - "Member"
- *     summary: Update Member
+ *      - "Receipt"
+ *     summary: Update Receipt
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: The id of Member
+ *         description: The id of Receipt
  *         schema:
  *           type: string
  *     requestBody:
@@ -115,15 +129,11 @@ router.get("/member/", Auth, Get);
  *            schema:
  *              type: object
  *              properties:
- *                name:
+ *                transaction_id:
  *                  type: string
- *                identity_type:
+ *                cash:
  *                  type: string
- *                identity_number:
- *                  type: string
- *                address:
- *                  type: string
- *                total_point:
+ *                member_id:
  *                  type: string
  *     responses:
  *       200:
@@ -131,22 +141,22 @@ router.get("/member/", Auth, Get);
  *       400:
  *         description: Bad request
  */
-router.put("/member/:id", Auth, Update);
+router.put("/receipt/:id", Auth, Update);
 
 /**
  * @swagger
- * /api/v1/member/{id}:
+ * /api/v1/receipt/{id}:
  *   delete:
  *     security:
  *      - bearerAuth: []
  *     tags:
- *      - "Member"
- *     summary: Delete Member (Soft Delete)
+ *      - "Receipt"
+ *     summary: Delete Receipt (Soft Delete)
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: The id of Member
+ *         description: The id of Receipt
  *         schema:
  *           type: string
  *     responses:
@@ -155,6 +165,6 @@ router.put("/member/:id", Auth, Update);
  *       404:
  *         description: Not found
  */
-router.delete("/member/:id", Auth, Delete);
+router.delete("/receipt/:id", Auth, Delete);
 
 module.exports = router;
