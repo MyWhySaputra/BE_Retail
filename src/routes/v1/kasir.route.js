@@ -21,25 +21,37 @@ const multer = require("multer")();
  *     tags:
  *      - "Kasir"
  *     summary: Check all kasir
- *     requestBody:
- *        required: false
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              properties:
- *                name:
- *                  type: string
- *                email:
- *                  type: string
- *                profile_picture:
- *                  type: string
- *                identity_type:
- *                  type: string
- *                identity_number:
- *                  type: integer
- *                address:
- *                  type: string
+ *     parameters:
+ *       - in: query
+ *         name: name
+ *         required: false
+ *         description: The name of kasir
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: email
+ *         required: false
+ *         description: The email of kasir
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: identity_type
+ *         required: false
+ *         description: The identity_type of kasir
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: identity_number
+ *         required: false
+ *         description: The identity_number of kasir
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: address
+ *         required: false
+ *         description: The address of kasir
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Successful response

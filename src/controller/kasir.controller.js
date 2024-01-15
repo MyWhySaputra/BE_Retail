@@ -4,33 +4,20 @@ const prisma = new PrismaClient();
 const imagekit = require("../lib/imagekit");
 
 async function Get(req, res) {
-  const { name, email, profile_picture, identity_type, identity_number, address } =
-    req.body;
+  const { name, email, identity_type, identity_number, address } =
+    req.query;
 
   const payload = {};
   const profile = {};
 
-  if (
-    !name &&
-    !email &&
-    !profile_picture &&
-    !identity_type &&
-    !identity_number &&
-    !address
-  ) {
-    let resp = ResponseTemplate(null, "bad request", null, 400);
-    res.status(400).json(resp);
-    return;
-  }
-
   if (name) payload.name = name;
   if (email) payload.email = email;
-  if (password) payload.password = password;
   if (profile_picture || identity_type || identity_number || address) payload.profile = profile;
-  if (profile_picture) profile.profile_picture = profile_picture;
   if (identity_type) profile.identity_type = identity_type;
   if (identity_number) profile.identity_number = identity_number;
   if (address) profile.address = address;
+
+  payload.deletedAt = null;
 
   try {
 
