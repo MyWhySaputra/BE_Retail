@@ -40,6 +40,16 @@ async function Get(req, res) {
       },
     });
 
+    const checkKasir = (objectName) => {
+      return Object.keys(objectName).length === 0;
+    };
+
+    if (checkKasir(kasir) === true) {
+      let resp = ResponseTemplate(null, "data not found", null, 404);
+      res.status(404).json(resp);
+      return;
+    }
+
     let resp = ResponseTemplate(kasir, "success", null, 200);
     res.status(200).json(resp);
     return;
@@ -57,7 +67,7 @@ async function Update(req, res) {
 
   const payload = {};
   const data = {};
-  const where = { user_id: Number(id) };
+  const where = { kasir_id: Number(id) };
   const update = { where, data };
   const profile = { update };
 
@@ -115,10 +125,10 @@ async function Update(req, res) {
             identity_type: true,
             identity_number: true,
             address: true,
-            created_at: true,
-            updated_at: true,
           },
         },
+        createAt: true,
+        updateAt: true,
       },
     });
 
@@ -174,9 +184,9 @@ async function Delete(req, res) {
             identity_type: true,
             identity_number: true,
             address: true,
-            deletedAt: true,
           },
         },
+        deletedAt: true,
       },
     });
 

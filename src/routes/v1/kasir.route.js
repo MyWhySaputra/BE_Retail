@@ -107,7 +107,7 @@ router.put(
 
 /**
  * @swagger
- * /api/v2/kasir/{id}:
+ * /api/v1/kasir/{id}:
  *   delete:
  *     security:
  *      - bearerAuth: []
