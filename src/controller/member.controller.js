@@ -38,8 +38,8 @@ async function Register(req, res) {
         identity_number: true,
         address: true,
         total_point: true,
-        created_at: true,
-        updated_at: true,
+        createAt: true,
+        updateAt: true,
       }
     });
 
@@ -96,8 +96,8 @@ async function Get(req, res) {
         identity_number: true,
         address: true,
         total_point: true,
-        created_at: true,
-        updated_at: true,
+        createAt: true,
+        updateAt: true,
       },
     });
 
@@ -166,8 +166,8 @@ async function Update(req, res) {
         identity_number: true,
         address: true,
         total_point: true,
-        created_at: true,
-        updated_at: true,
+        createAt: true,
+        updateAt: true,
       },
     });
 

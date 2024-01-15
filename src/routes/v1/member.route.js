@@ -32,8 +32,6 @@ const { Auth } = require("../../middleware/middleware");
  *                  type: string
  *                address:
  *                  type: string
- *                total_point:
- *                  type: string
  *     responses:
  *       200:
  *         description: Successful response
