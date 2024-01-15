@@ -12,7 +12,7 @@ async function Get(req, res) {
 
   if (name) payload.name = name;
   if (email) payload.email = email;
-  if (profile_picture || identity_type || identity_number || address) payload.profile = profile;
+  if (identity_type || identity_number || address) payload.profile = profile;
   if (identity_type) profile.identity_type = identity_type;
   if (identity_number) profile.identity_number = identity_number;
   if (address) profile.address = address;
@@ -33,10 +33,10 @@ async function Get(req, res) {
             identity_type: true,
             identity_number: true,
             address: true,
-            created_at: true,
-            updated_at: true,
           },
         },
+        createAt: true,
+        updateAt: true,
       },
     });
 
