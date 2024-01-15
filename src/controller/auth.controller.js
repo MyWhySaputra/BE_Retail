@@ -75,7 +75,7 @@ async function Register(req, res) {
       html: `<a href="${process.env.BASE_URL}/api/v1/auth/verify-email?token=${token}">Click here to verify your email</a>`,
     });
 
-    const kasirView = await prisma.user.findUnique({
+    const kasirView = await prisma.kasir.findUnique({
       where: {
         email: email,
       },

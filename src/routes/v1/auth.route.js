@@ -7,7 +7,7 @@ const {
   forgetPassword,
   resetPassword,
 } = require("../../controller/auth.controller");
-const { CheckRegister, CheckLogin, CheckForgot } = require("../../middleware/middleware");
+const { CheckLogin, CheckForgot } = require("../../middleware/middleware");
 
 const multer = require("multer")();
 
@@ -50,7 +50,6 @@ const multer = require("multer")();
  */
 router.post(
   "/auth/register",
-  CheckRegister,
   multer.single("profile_picture"),
   Register
 );
