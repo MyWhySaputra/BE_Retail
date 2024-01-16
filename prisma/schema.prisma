@@ -57,7 +57,7 @@ model receipt {
   cash_refund         Int       @db.Integer
   date                DateTime  
   point               Int       @db.Integer
-  member_id           Int?       @db.Integer
+  member_id           Int?      @db.Integer
   kasir_id            Int       @db.Integer
   createAt            DateTime  @default(now())
   updateAt            DateTime  @updatedAt
