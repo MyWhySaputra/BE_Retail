@@ -20,7 +20,7 @@ const { Auth } = require("../../middleware/middleware");
  *     requestBody:
  *        required: true
  *        content:
- *          multipart/form-data:
+ *          application/json:
  *            schema:
  *              type: object
  *              properties:
@@ -87,7 +87,7 @@ router.get("/items/", Auth, Get);
  *     requestBody:
  *        required: true
  *        content:
- *          multipart/form-data:
+ *          application/json:
  *            schema:
  *              type: object
  *              properties:
