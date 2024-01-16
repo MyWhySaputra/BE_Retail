@@ -17,8 +17,8 @@ async function Create(req, res) {
         id: true,
         name: true,
         price: true,
-        created_at: true,
-        updated_at: true,
+        createAt: true,
+        updateAt: true,
       },
     });
 
@@ -66,8 +66,8 @@ async function Get(req, res) {
         id: true,
         name: true,
         price: true,
-        created_at: true,
-        updated_at: true,
+        createAt: true,
+        updateAt: true,
       },
     });
 
@@ -123,8 +123,8 @@ async function Update(req, res) {
         id: true,
         name: true,
         price: true,
-        created_at: true,
-        updated_at: true,
+        createAt: true,
+        updateAt: true,
       },
     });
 
