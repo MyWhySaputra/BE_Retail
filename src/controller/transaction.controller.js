@@ -1,5 +1,6 @@
 const { ResponseTemplate } = require("../helper/template.helper");
 const { PrismaClient } = require("@prisma/client");
+const { connect } = require("../routes/v1/auth.route");
 const prisma = new PrismaClient();
 
 async function Insert(req, res) {
@@ -8,11 +9,21 @@ async function Insert(req, res) {
   const { transaction_id } = req.params;
 
   const payload = {
-    transaction_id: Number(transaction_id),
+    transaction: Number(transaction_id),
     item_id: Number(item_id),
     quantity: Number(quantity),
     discount: Number(discount),
     sub_total_price: 0,
+    receipt: {
+      connect: {
+        transaction_id: Number(transaction_id),
+      },
+    },
+    items: {
+      connect: {
+        id: Number(item_id),
+      },
+    },
   };
 
   try {
@@ -34,16 +45,40 @@ async function Insert(req, res) {
 
     payload.sub_total_price = OnePriceDiscount * Number(quantity);
 
+    const Receipt = await prisma.receipt.findUnique({
+      where: {
+        transaction_id: Number(transaction_id),
+      },
+    })
+
+    if (Receipt === null) {
+      await prisma.receipt.create({
+        data: {
+          transaction_id: Number(transaction_id),
+          total_price: 0,
+          cash: 0,
+          cash_refund: 0,
+          date: new Date(),
+          point: 0,
+          kasir_id: req.user.id,
+        },
+      });
+      return;
+    }
+
+    console.log(payload);
+
     const transaction = await prisma.transaction.create({
       data: payload,
       select: {
-        transaction_id: true,
+        id: true,
+        transaction: true,
         items_id: true,
         quantity: true,
         discount: true,
         sub_total_price: true,
-        created_at: true,
-        updated_at: true,
+        createAt: true,
+        updateAt: true,
       },
     });
 
@@ -51,8 +86,9 @@ async function Insert(req, res) {
     res.status(200).json(resp);
     return;
   } catch (error) {
-    let resp = ResponseTemplate(null, "internal server error", error, 500);
-    res.status(500).json(resp);
+    // let resp = ResponseTemplate(null, "internal server error", error, 500);
+    // res.status(500).json(resp);
+    console.log(error);
     return;
   }
 }
