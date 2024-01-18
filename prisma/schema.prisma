@@ -51,7 +51,7 @@ model member {
 
 model receipt {
   id                  Int       @id @default(autoincrement())
-  code                String    @unique
+  code                String    @db.VarChar(100) @unique
   total_price         Int       @db.Integer
   cash                Int       @db.Integer
   cash_refund         Int       @db.Integer
@@ -69,7 +69,7 @@ model receipt {
 
 model items_receipt {
   id                      Int       @id @default(autoincrement())
-  receipt_code            String      
+  receipt_code            String    @db.VarChar(100)
   items_id                Int       @db.Integer
   quantity                Int       @db.Integer
   sub_total_price         Int       @db.Integer
