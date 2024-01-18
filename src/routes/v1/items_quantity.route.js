@@ -5,7 +5,7 @@ const {
   Get,
   Update,
   Delete,
-} = require("../../controller/transaction.controller");
+} = require("../../controller/item_quantity.controller");
 const { Auth } = require("../../middleware/middleware");
 
 /**
