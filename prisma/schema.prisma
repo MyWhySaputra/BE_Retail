@@ -64,10 +64,10 @@ model receipt {
   deletedAt           DateTime?
   kasir kasir @relation(fields: [kasir_id], references: [id])
   member member? @relation(fields: [member_id], references: [id])
-  items_receipt items_receipt[]
+  items_receipt items_quantity[]
 }
 
-model items_receipt {
+model items_quantity {
   id                      Int       @id @default(autoincrement())
   receipt_code            String    @db.VarChar(100)
   items_id                Int       @db.Integer
@@ -88,5 +88,5 @@ model items {
   createAt    DateTime  @default(now())
   updateAt    DateTime  @updatedAt
   deletedAt   DateTime?
-  items_receipt   items_receipt[]
+  items_receipt   items_quantity[]
 }
