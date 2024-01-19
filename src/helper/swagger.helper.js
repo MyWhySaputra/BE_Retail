@@ -32,7 +32,7 @@ const swaggerDefinition = {
         './src/routes/v1/kasir.route.js',
         './src/routes/v1/member.route.js',
         './src/routes/v1/items.route.js',
-        './src/routes/v1/items_quantity.route.js',
+        './src/routes/v1/receipt_items.route.js',
         './src/routes/v1/receipt.route.js',
     ],
 

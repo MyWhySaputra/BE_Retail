@@ -3,7 +3,7 @@ const authV1 = require('./v1/auth.route')
 const memberV1 = require('./v1/member.route')
 const kasirV1 = require('./v1/kasir.route')
 const itemsV1 = require('./v1/items.route')
-const itemsQuantityV1 = require('./v1/items_quantity.route')
+const receipt_itemsV1 = require('./v1/receipt_items.route')
 const receiptV1 = require('./v1/receipt.route')
 const morgan = require('morgan')
 
@@ -15,7 +15,7 @@ v1.use("/", [
   memberV1,
   kasirV1,
   itemsV1,
-  itemsQuantityV1,
+  receipt_itemsV1,
   receiptV1,
 ]);
 
