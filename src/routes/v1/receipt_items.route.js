@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {
   Insert,
+  GetCart,
   Get,
   Update,
   Delete,
@@ -10,20 +11,13 @@ const { Auth } = require("../../middleware/middleware");
 
 /**
  * @swagger
- * /api/v1/transaction/{transaction_id}:
+ * /api/v1/receipt_items:
  *   post:
  *     security:
  *      - bearerAuth: []
  *     tags:
- *      - "Transaction"
- *     summary: example to register Transaction
- *     parameters:
- *       - in: path
- *         name: transaction_id
- *         required: true
- *         description: The transaction_id of Transaction
- *         schema:
- *           type: string
+ *      - "Receipt_items"
+ *     summary: example to insert Receipt_items
  *     requestBody:
  *        required: true
  *        content:
@@ -45,46 +39,63 @@ const { Auth } = require("../../middleware/middleware");
  *       500:
  *         description: Internal server error
  */
-router.post("/transaction/:transaction_id", Auth, Insert);
+router.post("/receipt_items/", Auth, Insert);
 
 /**
  * @swagger
- * /api/v1/transaction/{transaction_id}:
+ * /api/v1/receipt_items/cart:
  *   get:
  *     security:
  *      - bearerAuth: []
  *     tags:
- *      - "Transaction"
- *     summary: Get All Transaction
+ *      - "Receipt_items"
+ *     summary: Get cart
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *       404:
+ *         description: Not found
+ */
+router.get("/receipt_items/cart/", Auth, GetCart);
+
+/**
+ * @swagger
+ * /api/v1/receipt_items:
+ *   get:
+ *     security:
+ *      - bearerAuth: []
+ *     tags:
+ *      - "Receipt_items"
+ *     summary: Get All Receipt_items
  *     parameters:
- *       - in: path
- *         name: transaction_id
- *         required: true
- *         description: The transaction_id of Transaction
+ *       - in: query
+ *         name: receipt_code
+ *         required: false
+ *         description: The receipt_code of Receipt_items
  *         schema:
  *           type: string
  *       - in: query
- *         name: item_id
+ *         name: items_id
  *         required: false
- *         description: The item_id of Transaction
+ *         description: The items_id of Receipt_items
  *         schema:
  *           type: string
  *       - in: query
  *         name: quantity
  *         required: false
- *         description: The quantity of Transaction
+ *         description: The quantity of Receipt_items
  *         schema:
  *           type: string
  *       - in: query
  *         name: discount
  *         required: false
- *         description: The discount of Transaction
+ *         description: The discount of Receipt_items
  *         schema:
  *           type: string
  *       - in: query
  *         name: sub_total_price
  *         required: false
- *         description: The sub_total_price of Transaction
+ *         description: The sub_total_price of Receipt_items
  *         schema:
  *           type: string
  *     responses:
@@ -93,22 +104,22 @@ router.post("/transaction/:transaction_id", Auth, Insert);
  *       404:
  *         description: Not found
  */
-router.get("/transaction/:transaction_id", Auth, Get);
+router.get("/receipt_items/", Auth, Get);
 
 /**
  * @swagger
- * /api/v1/transaction/{id}:
+ * /api/v1/receipt_items/{id}:
  *   put:
  *     security:
  *      - bearerAuth: []
  *     tags:
- *      - "Transaction"
- *     summary: Update Transaction
+ *      - "Receipt_items"
+ *     summary: Update Receipt_items
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: The id of Transaction
+ *         description: The id of Receipt_items
  *         schema:
  *           type: string
  *     requestBody:
@@ -118,7 +129,7 @@ router.get("/transaction/:transaction_id", Auth, Get);
  *            schema:
  *              type: object
  *              properties:
- *                transaction_id:
+ *                Receipt_items_id:
  *                  type: string
  *                item_id:
  *                  type: string
@@ -134,22 +145,22 @@ router.get("/transaction/:transaction_id", Auth, Get);
  *       400:
  *         description: Bad request
  */
-router.put("/transaction/:id", Auth, Update);
+router.put("/receipt_items/:id", Auth, Update);
 
 /**
  * @swagger
- * /api/v1/transaction/{id}:
+ * /api/v1/receipt_items/{id}:
  *   delete:
  *     security:
  *      - bearerAuth: []
  *     tags:
- *      - "Transaction"
- *     summary: Delete Transaction (Soft Delete)
+ *      - "Receipt_items"
+ *     summary: Delete Receipt_items (Soft Delete)
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: The id of Transaction
+ *         description: The id of Receipt_items
  *         schema:
  *           type: string
  *     responses:
@@ -158,6 +169,6 @@ router.put("/transaction/:id", Auth, Update);
  *       404:
  *         description: Not found
  */
-router.delete("/transaction/:id", Auth, Delete);
+router.delete("/receipt_items/:id", Auth, Delete);
 
 module.exports = router;

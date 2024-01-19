@@ -6,22 +6,20 @@ const prisma = new PrismaClient();
 async function Insert(req, res) {
   const { item_id, quantity, discount } = req.body;
 
-  const { transaction_id } = req.params;
+  const receipt_code = `Trc${req.user.id}`;
 
   const payload = {
-    transaction: Number(transaction_id),
-    item_id: Number(item_id),
     quantity: Number(quantity),
     discount: Number(discount),
     sub_total_price: 0,
-    receipt: {
-      connect: {
-        transaction_id: Number(transaction_id),
-      },
-    },
     items: {
       connect: {
         id: Number(item_id),
+      },
+    },
+    receipt: {
+      connect: {
+        code: receipt_code,
       },
     },
   };
@@ -47,14 +45,14 @@ async function Insert(req, res) {
 
     const Receipt = await prisma.receipt.findUnique({
       where: {
-        transaction_id: Number(transaction_id),
+        code: receipt_code,
       },
-    })
+    });
 
     if (Receipt === null) {
       await prisma.receipt.create({
         data: {
-          transaction_id: Number(transaction_id),
+          code: receipt_code,
           total_price: 0,
           cash: 0,
           cash_refund: 0,
@@ -63,16 +61,12 @@ async function Insert(req, res) {
           kasir_id: req.user.id,
         },
       });
-      return;
     }
 
-    console.log(payload);
-
-    const transaction = await prisma.transaction.create({
+    const receipt_items = await prisma.receipt_items.create({
       data: payload,
       select: {
         id: true,
-        transaction: true,
         items_id: true,
         quantity: true,
         discount: true,
@@ -82,26 +76,103 @@ async function Insert(req, res) {
       },
     });
 
-    let resp = ResponseTemplate(transaction, "success", null, 200);
+    let resp = ResponseTemplate(receipt_items, "success", null, 200);
     res.status(200).json(resp);
     return;
   } catch (error) {
-    // let resp = ResponseTemplate(null, "internal server error", error, 500);
-    // res.status(500).json(resp);
-    console.log(error);
+    let resp = ResponseTemplate(null, "internal server error", error, 500);
+    res.status(500).json(resp);
+    return;
+  }
+}
+
+async function GetCart(req, res) {
+  const { page = 1, limit = 10 } = req.query;
+
+  const receipt_code = `Trc${req.user.id}`;
+
+  try {
+    const checkReceipt_items = await prisma.receipt_items.findMany({
+      where: {
+        receipt_code: receipt_code,
+      },
+    });
+
+    if (checkReceipt_items === null) {
+      let resp = ResponseTemplate(null, "data not found", null, 404);
+      res.status(404).json(resp);
+      return;
+    }
+
+    const skip = (page - 1) * limit;
+
+    //informasi total data keseluruhan
+    const resultCount = await prisma.receipt_items.count(); // integer jumlah total data user
+
+    //generated total page
+    const totalPage = Math.ceil(resultCount / limit);
+
+    const receipt_items = await prisma.receipt_items.findMany({
+      //take : 10,
+      take: parseInt(limit),
+      //skip : 10
+      skip: skip,
+      where: {
+        receipt_code: receipt_code,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        items_id: true,
+        quantity: true,
+        discount: true,
+        sub_total_price: true,
+        createAt: true,
+        updateAt: true,
+      },
+    });
+
+    const pagination = {
+      current_page: page - 0, // ini - 0 merubah menjadi integer
+      total_page: totalPage,
+      total_data: resultCount,
+      data: receipt_items,
+    };
+    const cekReceipt_items = (objectName) => {
+      return Object.keys(objectName).length === 0;
+    };
+
+    if (cekReceipt_items(receipt_items) === true) {
+      let resp = ResponseTemplate(null, "data not found", null, 404);
+      res.status(404).json(resp);
+      return;
+    }
+
+    let resp = ResponseTemplate(pagination, "success", null, 200);
+    res.status(200).json(resp);
+    return;
+  } catch (error) {
+    let resp = ResponseTemplate(null, "internal server error", error, 500);
+    res.status(500).json(resp);
     return;
   }
 }
 
 async function Get(req, res) {
-  const { item_id, quantity, discount, sub_total_price, page = 1, limit = 10 } = req.query;
-
-  const { transaction_id } = req.params;
+  const {
+    receipt_code,
+    items_id,
+    quantity,
+    discount,
+    sub_total_price,
+    page = 1,
+    limit = 10,
+  } = req.query;
 
   const payload = {};
 
-  if (transaction_id) payload.transaction_id = Number(transaction_id);
-  if (item_id) payload.item_id = Number(item_id);
+  if (receipt_code) payload.receipt_code = receipt_code;
+  if (items_id) payload.items_id = Number(items_id);
   if (quantity) payload.quantity = Number(quantity);
   if (discount) payload.discount = Number(discount);
   if (sub_total_price) payload.sub_total_price = Number(sub_total_price);
@@ -112,12 +183,12 @@ async function Get(req, res) {
     const skip = (page - 1) * limit;
 
     //informasi total data keseluruhan
-    const resultCount = await prisma.transaction.count(); // integer jumlah total data user
+    const resultCount = await prisma.receipt_items.count(); // integer jumlah total data user
 
     //generated total page
     const totalPage = Math.ceil(resultCount / limit);
 
-    const transactions = await prisma.transaction.findMany({
+    const receipt_items = await prisma.receipt_items.findMany({
       //take : 10,
       take: parseInt(limit),
       //skip : 10
@@ -125,13 +196,13 @@ async function Get(req, res) {
       where: payload,
       select: {
         id: true,
-        transaction_id: true,
+        receipt_code: true,
         items_id: true,
         quantity: true,
         discount: true,
         sub_total_price: true,
-        created_at: true,
-        updated_at: true,
+        createAt: true,
+        updateAt: true,
       },
     });
 
@@ -139,13 +210,13 @@ async function Get(req, res) {
       current_page: page - 0, // ini - 0 merubah menjadi integer
       total_page: totalPage,
       total_data: resultCount,
-      data: transactions,
+      data: receipt_items,
     };
-    const cekTransaction = (objectName) => {
+    const cekReceipt_items = (objectName) => {
       return Object.keys(objectName).length === 0;
     };
 
-    if (cekTransaction(transactions) === true) {
+    if (cekReceipt_items(receipt_items) === true) {
       let resp = ResponseTemplate(null, "data not found", null, 404);
       res.status(404).json(resp);
       return;
@@ -162,42 +233,47 @@ async function Get(req, res) {
 }
 
 async function Update(req, res) {
-  const { transaction_id, item_id, quantity, discount, sub_total_price } = req.body;
+  const { items_id, quantity, discount, sub_total_price } =
+    req.body;
   const { id } = req.params;
 
   const payload = {};
 
-  if (!transaction_id && !item_id && !quantity && !discount && !sub_total_price) {
+  if (
+    !items_id &&
+    !quantity &&
+    !discount &&
+    !sub_total_price
+  ) {
     let resp = ResponseTemplate(null, "bad request", null, 400);
     res.status(400).json(resp);
     return;
   }
 
-  if (transaction_id) payload.transaction_id = Number(transaction_id);
-  if (item_id) payload.item_id = Number(item_id);
+  if (items_id) payload.items_id = Number(items_id);
   if (quantity) payload.quantity = Number(quantity);
   if (discount) payload.discount = Number(discount);
   if (sub_total_price) payload.sub_total_price = Number(sub_total_price);
 
   try {
-    const transaction = await prisma.transaction.update({
+    const receipt_items = await prisma.receipt_items.update({
       where: {
         id: Number(id),
       },
       data: payload,
       select: {
         id: true,
-        transaction_id: true,
+        receipt_code: true,
         items_id: true,
         quantity: true,
         discount: true,
         sub_total_price: true,
-        created_at: true,
-        updated_at: true,
+        createAt: true,
+        updateAt: true,
       },
     });
 
-    let resp = ResponseTemplate(transaction, "success", null, 200);
+    let resp = ResponseTemplate(receipt_items, "success", null, 200);
     res.status(200).json(resp);
     return;
   } catch (error) {
@@ -211,19 +287,19 @@ async function Delete(req, res) {
   const { id } = req.params;
 
   try {
-    const checkTransaction = await prisma.transaction.findUnique({
+    const checkreceipt_items = await prisma.receipt_items.findUnique({
       where: {
         id: Number(id),
       },
     });
 
-    if (checkTransaction === null) {
+    if (checkreceipt_items === null) {
       let resp = ResponseTemplate(null, "data not found", null, 404);
       res.status(404).json(resp);
       return;
     }
 
-    const transaction = await prisma.transaction.update({
+    const receipt_items = await prisma.receipt_items.update({
       where: {
         id: Number(id),
       },
@@ -232,7 +308,7 @@ async function Delete(req, res) {
       },
       select: {
         id: true,
-        transaction_id: true,
+        receipt_code: true,
         items_id: true,
         quantity: true,
         discount: true,
@@ -241,7 +317,7 @@ async function Delete(req, res) {
       },
     });
 
-    let resp = ResponseTemplate(transaction, "delete success", null, 200);
+    let resp = ResponseTemplate(receipt_items, "delete success", null, 200);
     res.status(200).json(resp);
     return;
   } catch (error) {
@@ -253,6 +329,7 @@ async function Delete(req, res) {
 
 module.exports = {
   Insert,
+  GetCart,
   Get,
   Update,
   Delete,
