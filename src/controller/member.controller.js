@@ -192,7 +192,7 @@ async function Delete(req, res) {
       },
     });
 
-    if (checkMember === null) {
+    if (checkMember === null || checkMember.deletedAt !== null) {
       let resp = ResponseTemplate(null, "data not found", null, 404);
       res.status(404).json(resp);
       return;

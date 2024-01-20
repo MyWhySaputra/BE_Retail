@@ -148,7 +148,7 @@ async function Delete(req, res) {
       },
     });
 
-    if (checkItems === null) {
+    if (checkItems === null || checkItems.deletedAt !== null) {
       let resp = ResponseTemplate(null, "data not found", null, 404);
       res.status(404).json(resp);
       return;

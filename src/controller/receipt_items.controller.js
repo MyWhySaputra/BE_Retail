@@ -293,7 +293,7 @@ async function Delete(req, res) {
       },
     });
 
-    if (checkreceipt_items === null) {
+    if (checkreceipt_items === null || checkreceipt_items.deletedAt !== null) {
       let resp = ResponseTemplate(null, "data not found", null, 404);
       res.status(404).json(resp);
       return;
