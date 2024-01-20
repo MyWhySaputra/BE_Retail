@@ -5,18 +5,55 @@ const prisma = new PrismaClient();
 async function Insert(req, res) {
   const { cash, member_id } = req.body;
 
-  const payload = {
-    transaction_id: Number(transaction_id),
-    total_price: 0,
-    cash: Number(cash),
-    cash_refund: 0,
-    date: new Date(),
-    point: 0,
-    member_id: Number(member_id),
-    kasir_id: req.user.id,
-  };
+  const code = `Trc${req.user.id}`;
+
+  const payload = {};
 
   try {
+
+    const checkReceipt = await prisma.receipt.findUnique({
+      where: {
+        code: code,
+      }
+    })
+
+    payload.code = `Trx${checkReceipt.id}`
+
+    const totalPrice = await prisma.receipt_items.aggregate({
+      _sum: {
+        sub_total_price: true,
+      },
+      where: {
+        receipt_code: code,
+      },
+    });
+
+    payload.total_price = Number(totalPrice._sum.sub_total_price);
+
+    payload.cash = Number(cash);
+
+    if (Number(cash) < Number(totalPrice._sum.sub_total_price)) {
+      let resp = ResponseTemplate(null, "cash not enough", null, 400);
+      res.status(400).json(resp);
+      return;
+    }
+
+    payload.cash_refund =
+      Number(cash) - Number(totalPrice._sum.sub_total_price);
+
+    const totalPoint = await prisma.receipt_items.aggregate({
+      _count: {
+        id: true,
+      },
+      where: {
+        receipt_code: code,
+      },
+    });
+
+    payload.date = new Date();
+
+    payload.point = Number(totalPoint._count.id) * 10;
+
     if (member_id) {
       const checkMember = await prisma.member.findUnique({
         where: {
@@ -24,61 +61,36 @@ async function Insert(req, res) {
         },
       });
 
-      if (!checkMember) {
+      if (checkMember === null) {
         let resp = ResponseTemplate(null, "data not found", null, 404);
         res.status(404).json(resp);
         return;
       }
-      return;
-    }
 
-    const totalPrice = await prisma.transaction.findMany({
-      where: {
-        transaction_id: Number(transaction_id),
-      },
-      _sum: {
-        sub_total_price: true,
-      },
-    });
+      payload.member_id = Number(member_id);
 
-    payload.total_price = Number(totalPrice);
-
-    if (Number(cash) < Number(totalPrice)) {
-      let resp = ResponseTemplate(null, "cash not enough", null, 400);
-      res.status(400).json(resp);
-      return;
-    }
-
-    payload.cash_refund = Number(cash) - Number(totalPrice);
-
-    const totalPoint = await prisma.transaction.count({
-      where: {
-        transaction_id: Number(transaction_id),
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    payload.point = Number(totalPoint) * 10;
-
-    if (member_id) {
       await prisma.member.update({
         where: {
           id: Number(member_id),
         },
         data: {
-          total_point: { increment: Number(totalPoint) * 10 },
+          total_point: { increment: Number(totalPoint._count.id) * 10 },
         },
       });
+
       return;
     }
 
-    const receipt = await prisma.receipt.create({
+    payload.kasir_id = req.user.id;
+
+    const receipt = await prisma.receipt.update({
+      where: {
+        code: code,
+      },
       data: payload,
       select: {
         id: true,
-        transaction_id: true,
+        code: true,
         total_price: true,
         cash: true,
         cash_refund: true,
@@ -86,8 +98,8 @@ async function Insert(req, res) {
         point: true,
         member_id: true,
         kasir_id: true,
-        created_at: true,
-        updated_at: true,
+        createAt: true,
+        updateAt: true,
       },
     });
 
@@ -103,7 +115,7 @@ async function Insert(req, res) {
 
 async function Get(req, res) {
   const {
-    transaction_id,
+    code,
     total_price,
     cash,
     cash_refund,
@@ -117,7 +129,7 @@ async function Get(req, res) {
 
   const payload = {};
 
-  if (transaction_id) payload.transaction_id = Number(transaction_id);
+  if (code) payload.code = code;
   if (total_price) payload.total_price = Number(total_price);
   if (cash) payload.cash = Number(cash);
   if (cash_refund) payload.cash_refund = Number(cash_refund);
@@ -145,7 +157,7 @@ async function Get(req, res) {
       where: payload,
       select: {
         id: true,
-        transaction_id: true,
+        code: true,
         total_price: true,
         cash: true,
         cash_refund: true,
@@ -153,8 +165,8 @@ async function Get(req, res) {
         point: true,
         member_id: true,
         kasir_id: true,
-        created_at: true,
-        updated_at: true,
+        createAt: true,
+        updateAt: true,
       },
     });
 
@@ -185,12 +197,12 @@ async function Get(req, res) {
 }
 
 async function Update(req, res) {
-  const { transaction_id, cash, member_id } = req.body;
+  const { code, cash, member_id } = req.body;
   const { id } = req.params;
 
   const payload = {};
 
-  if (!transaction_id && !cash && !member_id) {
+  if (!code && !cash && !member_id) {
     let resp = ResponseTemplate(null, "bad request", null, 400);
     res.status(400).json(resp);
     return;
@@ -203,13 +215,13 @@ async function Update(req, res) {
       },
     });
 
-    if (!checktransaction) {
+    if (checkreceipt === null) {
       let resp = ResponseTemplate(null, "data not found", null, 404);
       res.status(404).json(resp);
       return;
     }
 
-    if (transaction_id) payload.transaction_id = Number(transaction_id);
+    if (code) payload.code = code;
     if (cash) {
       payload.cash = Number(cash);
       payload.cash_refund = Number(cash) - checkreceipt.total_price;
@@ -223,7 +235,7 @@ async function Update(req, res) {
         },
       });
 
-      if (!checkMember) {
+      if (checkMember === null) {
         let resp = ResponseTemplate(null, "data not found", null, 404);
         res.status(404).json(resp);
         return;
@@ -234,13 +246,12 @@ async function Update(req, res) {
           id: Number(member_id),
         },
         data: {
-          total_point:
-            Number(checkMember.total_point) + Number(checkreceipt.point),
+          total_point: { increment: Number(checkreceipt.point) },
         },
       });
     }
 
-    if (kasir_id) payload.kasir_id = Number(req.user.id);
+    payload.kasir_id = Number(req.user.id);
 
     const receipt = await prisma.receipt.update({
       where: {
@@ -249,7 +260,7 @@ async function Update(req, res) {
       data: payload,
       select: {
         id: true,
-        transaction_id: true,
+        code: true,
         total_price: true,
         cash: true,
         cash_refund: true,
@@ -257,8 +268,8 @@ async function Update(req, res) {
         point: true,
         member_id: true,
         kasir_id: true,
-        created_at: true,
-        updated_at: true,
+        createAt: true,
+        updateAt: true,
       },
     });
 
@@ -282,7 +293,7 @@ async function Delete(req, res) {
       },
     });
 
-    if (checkreceipt === null) {
+    if (checkreceipt === null || checkreceipt.deletedAt !== null) {
       let resp = ResponseTemplate(null, "data not found", null, 404);
       res.status(404).json(resp);
       return;
@@ -297,7 +308,7 @@ async function Delete(req, res) {
       },
       select: {
         id: true,
-        transaction_id: true,
+        code: true,
         total_price: true,
         cash: true,
         cash_refund: true,

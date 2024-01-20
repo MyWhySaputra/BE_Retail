@@ -24,8 +24,6 @@ const { Auth } = require("../../middleware/middleware");
  *            schema:
  *              type: object
  *              properties:
- *                transaction_id:
- *                  type: string
  *                cash:
  *                  type: string
  *                member_id:
@@ -51,9 +49,9 @@ router.post("/receipt/", Auth, Insert);
  *     summary: Get All Receipt
  *     parameters:
  *       - in: query
- *         name: transaction_id
+ *         name: code
  *         required: false
- *         description: The transaction_id of Receipt
+ *         description: The code of Receipt
  *         schema:
  *           type: string
  *       - in: query
@@ -129,7 +127,7 @@ router.get("/receipt/", Auth, Get);
  *            schema:
  *              type: object
  *              properties:
- *                transaction_id:
+ *                code:
  *                  type: string
  *                cash:
  *                  type: string
