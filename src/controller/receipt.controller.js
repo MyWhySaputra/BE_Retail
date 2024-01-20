@@ -3,7 +3,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 async function Insert(req, res) {
-  const { transaction_id, cash, member_id } = req.body;
+  const { cash, member_id } = req.body;
 
   const payload = {
     transaction_id: Number(transaction_id),
