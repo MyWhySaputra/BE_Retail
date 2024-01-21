@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "build": "nodemon index.js --output public",
+    "build": "nodemon index.js --ignore src/ --ignore prisma/ --ignore public/ --ignore public/uploads/",
     "postinstall": "prisma generate"
   },
   "keywords": [],
