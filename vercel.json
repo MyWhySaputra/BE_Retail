@@ -14,8 +14,8 @@
   ],
   "rewrites": [
     {
-      "source": "/src/routes(.*)",
-      "destination": "/src/routes"
+      "src": "/src/routes(.*)",
+      "dest": "/src/routes"
     }
   ]
 }
