@@ -32,7 +32,7 @@ app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec))
 
 app.get('/', (req, res) => {
     //res.render('home.ejs')
-    res.sendFile('/views/home.html')
+    res.sendFile('./views/home.html')
 })
 
 app.listen(port, () => {
