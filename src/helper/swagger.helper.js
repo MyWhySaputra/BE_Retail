@@ -5,6 +5,9 @@ const {
   SwaggerUIStandalonePreset,
 } = require("swagger-ui-dist");
 
+const CSS_URL =
+  "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
+
 swaggerOptions = {
   swaggerDefinition: {
     openapi: "3.0.0",
@@ -47,6 +50,7 @@ const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 const options = {
   customCss: ".swagger-ui .topbar { display: none }",
+  customCssUrl: CSS_URL,
 };
 
 module.exports = swaggerUi.setup(swaggerDocs, options);
