@@ -31,7 +31,8 @@ app.use('/', router)
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec))
 
 app.get('/', (req, res) => {
-    res.render('home.ejs')
+    //res.render('home.ejs')
+    res.send('Hello World!')
 })
 
 app.listen(port, () => {
