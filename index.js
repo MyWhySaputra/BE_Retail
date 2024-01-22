@@ -32,7 +32,7 @@ app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec))
 
 app.get('/', (req, res) => {
     //res.render('home.ejs')
-    res.send('Hello World!')
+    res.render('home.html')
 })
 
 app.listen(port, () => {
