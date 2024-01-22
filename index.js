@@ -5,7 +5,7 @@ const app = express();
 
 const router = require("./src/routes/routes");
 
-const swaggerUI = require("swagger-ui-express");
+const swaggerUi = require("swagger-ui-express");
 const swagger = require("./src/helper/swagger.helper");
 
 const cors = require("cors");
@@ -25,7 +25,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use("/", router);
-app.use("/docs", swaggerUI.serve, swagger);
+app.use("/docs", swaggerUi.serve, swagger);
 
 const path = require("path");
 
