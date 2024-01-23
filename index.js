@@ -30,8 +30,9 @@ app.use("/docs", swaggerUi.serve, swagger);
 const path = require("path");
 
 app.get("/", (req, res) => {
-  const filePath = path.join(__dirname, "views", "home.html");
-  res.sendFile(filePath);
+  res.render("home.ejs");
+  // const filePath = path.join(__dirname, "views", "home.html");
+  // res.sendFile(filePath);
 });
 
 app.listen(port, () => {
