@@ -224,7 +224,7 @@ async function forgetPassword(req, res) {
       html: `<a href="${process.env.BASE_URL}/api/v1/auth/reset-password?token=${token}">Click here to reset password</a>`,
     });
 
-    let resp = ResponseTemplate(null, "check your email", null, 200);
+    let resp = ResponseTemplate(null, "success, please check your email", null, 200);
     res.status(200).json(resp);
     return;
   } catch (error) {
