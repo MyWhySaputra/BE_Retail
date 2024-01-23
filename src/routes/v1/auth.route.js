@@ -9,6 +9,8 @@ const {
 } = require("../../controller/auth.controller");
 const { CheckLogin, CheckForgot } = require("../../middleware/middleware");
 
+const path = require("path");
+
 const multer = require("multer")();
 
 /**
