@@ -110,7 +110,7 @@ router.get("/auth/reset-password", (req, res) => {
   const token = req.query.token;
   // res.render("reset-password.ejs", { token });
   const filePath = path.join(__dirname, "views", "reset-password.html");
-  res.sendFile(filePath, { token });
+  res.sendFile(filePath);
 });
 
 router.post("/auth/reset-password", resetPassword);
