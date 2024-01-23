@@ -24,22 +24,6 @@ async function Auth(req, res, next) {
   }
 }
 
-async function Admin(req, res, next) {
-  try {
-    if (req.user.role !== "ADMIN") {
-      let resp = ResponseTemplate(null, "you are not admin", null, 404);
-      res.status(404).json(resp);
-      return;
-    }
-
-    next();
-  } catch (error) {
-    let resp = ResponseTemplate(null, "internal server error", error, 500);
-    res.status(500).json(resp);
-    return;
-  }
-}
-
 function CheckLogin(req, res, next) {
   const schema = Joi.object({
     email: Joi.string().email().required(),
@@ -133,7 +117,6 @@ function CheckUpdate(req, res, next) {
 
 module.exports = {
   Auth,
-  Admin,
   CheckLogin,
   CheckForgot,
   CheckRegister,
