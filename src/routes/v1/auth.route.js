@@ -9,7 +9,7 @@ const {
 } = require("../../controller/auth.controller");
 const { CheckLogin, CheckForgot } = require("../../middleware/middleware");
 
-const path = require("path");
+// const path = require("path");
 
 const multer = require("multer")();
 
@@ -108,13 +108,40 @@ router.get("/auth/verify-email", verifyEmail);
  */
 router.post("/auth/forget-password", CheckForgot, forgetPassword);
 
-router.get("/auth/reset-password", (req, res) => {
-  const token = req.query.token;
-  // res.render("reset-password.ejs", { token });
-  const filePath = path.join(__dirname, "views", "reset-password.html");
-  res.sendFile(filePath);
-});
+// router.get("/auth/reset-password", (req, res) => {
+//   const token = req.query.token;
+//   res.render("reset-password.ejs", { token });
+// });
 
+/**
+ * @swagger
+ * /api/v1/auth/reset-password:
+ *   post:
+ *     tags:
+ *      - "Auth"
+ *     summary: example to reset password
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         required: false
+ *         description: The token for reset password
+ *         schema:
+ *           type: string  
+ *     requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                newPassword:
+ *                  type: string
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *       400:
+ *         description: Bad request
+ */
 router.post("/auth/reset-password", resetPassword);
 
 module.exports = router;

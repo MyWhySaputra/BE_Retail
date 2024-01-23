@@ -213,7 +213,7 @@ async function forgetPassword(req, res) {
       {
         email: checkKasir.email,
       },
-      process.env.SECRET_KEY,
+      process.env.SECRET_KEY_RP,
       { expiresIn: "1h" }
     );
 
@@ -221,7 +221,8 @@ async function forgetPassword(req, res) {
       from: process.env.EMAIL_SMTP,
       to: email,
       subject: "Reset your password",
-      html: `<a href="${process.env.BASE_URL}/api/v1/auth/reset-password?token=${token}">Click here to reset password</a>`,
+      // html: `<a href="${process.env.BASE_URL}/api/v1/auth/reset-password?token=${token}">Click here to reset password</a>`,
+      html: `Token : ${token}`,
     });
 
     let resp = ResponseTemplate(null, "success, please check your email", null, 200);
@@ -235,12 +236,15 @@ async function forgetPassword(req, res) {
 }
 
 async function resetPassword(req, res) {
-  const { token, newPassword } = req.body;
+  // const { token, newPassword } = req.body;
+  const { newPassword } = req.body;
+  
+  const { token } = req.query;
 
   const HashNewPass = await HashPassword(newPassword);
 
   try {
-    const kasir = await jwt.verify(token, process.env.SECRET_KEY);
+    const kasir = await jwt.verify(token, process.env.SECRET_KEY_RP);
 
     await prisma.kasir.update({
       where: { email: kasir.email },
