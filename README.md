@@ -361,3 +361,7 @@ This is a Toko Retail API. It's a simple REST API. You can use it to create, rea
     Date: Thu, 24 Feb 2011 12:36:33 GMT
     Status: 204 No Content
     Connection: close
+
+# ERD
+
+![Tux, the Linux](/ERD.png)
