@@ -127,8 +127,6 @@ router.get("/receipt/", Auth, Get);
  *            schema:
  *              type: object
  *              properties:
- *                code:
- *                  type: string
  *                cash:
  *                  type: string
  *                member_id:

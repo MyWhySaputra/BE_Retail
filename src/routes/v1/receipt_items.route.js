@@ -129,15 +129,11 @@ router.get("/receipt_items/", Auth, Get);
  *            schema:
  *              type: object
  *              properties:
- *                Receipt_items_id:
- *                  type: string
- *                item_id:
+ *                items_id:
  *                  type: string
  *                quantity:
  *                  type: string
  *                discount:
- *                  type: string
- *                sub_total_price:
  *                  type: string
  *     responses:
  *       200:
