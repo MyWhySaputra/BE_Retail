@@ -3,6 +3,8 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const imagekit = require("../lib/imagekit");
 
+const { DateTime } = require("luxon");
+
 async function Get(req, res) {
   const { name, email, identity_type, identity_number, address } =
     req.query;
@@ -167,11 +169,15 @@ async function Delete(req, res) {
       },
     });
 
+    const timestamp = DateTime.now().toMillis();
+    const random = Math.random().toString(36).substring(7);
+
     const kasir = await prisma.kasir.update({
       where: {
         id: Number(id),
       },
       data: {
+        email: `${checkKasir.email}_${timestamp}_${random}`,
         deletedAt: new Date(),
       },
       select: {
