@@ -78,7 +78,9 @@ async function Get(req, res) {
     const skip = (page - 1) * limit;
 
     //informasi total data keseluruhan
-    const resultCount = await prisma.member.count(); // integer jumlah total data user
+    const resultCount = await prisma.member.count({
+      where: payload,
+    }); // integer jumlah total data user
 
     //generated total page
     const totalPage = Math.ceil(resultCount / limit);

@@ -13,9 +13,15 @@ async function Insert(req, res) {
 
     const checkReceipt = await prisma.receipt.findUnique({
       where: {
-        code: code,
+        code: code
       }
     })
+
+    if (checkReceipt ===  null || checkReceipt.deletedAt !== null) {
+      let resp = ResponseTemplate(null, "data not found", null, 404);
+      res.status(404).json(resp);
+      return;
+    }
 
     payload.code = `Trx${checkReceipt.id}`
 
@@ -25,6 +31,7 @@ async function Insert(req, res) {
       },
       where: {
         receipt_code: code,
+        deletedAt: null,
       },
     });
 
@@ -47,6 +54,7 @@ async function Insert(req, res) {
       },
       where: {
         receipt_code: code,
+        deletedAt: null,
       },
     });
 
@@ -144,7 +152,9 @@ async function Get(req, res) {
     const skip = (page - 1) * limit;
 
     //informasi total data keseluruhan
-    const resultCount = await prisma.receipt.count(); // integer jumlah total data user
+    const resultCount = await prisma.receipt.count({
+      where: payload,
+    }); // integer jumlah total data user
 
     //generated total page
     const totalPage = Math.ceil(resultCount / limit);
@@ -197,12 +207,12 @@ async function Get(req, res) {
 }
 
 async function Update(req, res) {
-  const { code, cash, member_id } = req.body;
+  const { cash, member_id } = req.body;
   const { id } = req.params;
 
   const payload = {};
 
-  if (!code && !cash && !member_id) {
+  if (!cash && !member_id) {
     let resp = ResponseTemplate(null, "bad request", null, 400);
     res.status(400).json(resp);
     return;
@@ -221,11 +231,9 @@ async function Update(req, res) {
       return;
     }
 
-    if (code) payload.code = code;
     if (cash) {
       payload.cash = Number(cash);
       payload.cash_refund = Number(cash) - checkreceipt.total_price;
-      payload.date = new Date();
     }
     if (member_id) {
       payload.member_id = Number(member_id);

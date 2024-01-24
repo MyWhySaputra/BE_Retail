@@ -160,7 +160,7 @@ async function Delete(req, res) {
 
     await prisma.profile.update({
       where: {
-        user_id: Number(id),
+        kasir_id: Number(id),
       },
       data: {
         deletedAt: new Date(),

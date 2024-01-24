@@ -95,6 +95,7 @@ async function GetCart(req, res) {
     const checkReceipt_items = await prisma.receipt_items.findMany({
       where: {
         receipt_code: receipt_code,
+        deletedAt: null,
       },
     });
 
@@ -107,7 +108,12 @@ async function GetCart(req, res) {
     const skip = (page - 1) * limit;
 
     //informasi total data keseluruhan
-    const resultCount = await prisma.receipt_items.count(); // integer jumlah total data user
+    const resultCount = await prisma.receipt_items.count({
+      where: {
+        receipt_code: receipt_code,
+        deletedAt: null,
+      },
+    });
 
     //generated total page
     const totalPage = Math.ceil(resultCount / limit);
@@ -183,7 +189,9 @@ async function Get(req, res) {
     const skip = (page - 1) * limit;
 
     //informasi total data keseluruhan
-    const resultCount = await prisma.receipt_items.count(); // integer jumlah total data user
+    const resultCount = await prisma.receipt_items.count({
+      where: payload,
+    }); // integer jumlah total data user
 
     //generated total page
     const totalPage = Math.ceil(resultCount / limit);
@@ -233,27 +241,62 @@ async function Get(req, res) {
 }
 
 async function Update(req, res) {
-  const { items_id, quantity, discount, sub_total_price } =
-    req.body;
+  const { items_id, quantity, discount } = req.body;
   const { id } = req.params;
+
+  const check = await prisma.receipt_items.findUnique({
+    where: {
+      id: Number(id),
+    },
+  });
+
+  if (check === null) {
+    let resp = ResponseTemplate(null, "data not found", null, 404);
+    res.status(404).json(resp);
+    return;
+  }
 
   const payload = {};
 
-  if (
-    !items_id &&
-    !quantity &&
-    !discount &&
-    !sub_total_price
-  ) {
+  if (!items_id && !quantity && !discount) {
     let resp = ResponseTemplate(null, "bad request", null, 400);
     res.status(400).json(resp);
     return;
   }
 
-  if (items_id) payload.items_id = Number(items_id);
-  if (quantity) payload.quantity = Number(quantity);
-  if (discount) payload.discount = Number(discount);
-  if (sub_total_price) payload.sub_total_price = Number(sub_total_price);
+  const checkItems = await prisma.items.findUnique({
+    where: { id: Number(items_id || check.items_id) },
+  });
+
+  if (checkItems === null) {
+    let resp = ResponseTemplate(null, "items not found", null, 404);
+    res.status(404).json(resp);
+    return;
+  }
+
+  if (items_id) {
+    payload.items_id = Number(items_id);
+    const disc = (check.discount / 100) * (checkItems.price * check.quantity);
+    payload.sub_total_price = check.quantity * checkItems.price - disc;
+  }
+
+  if (quantity) {
+    payload.quantity = Number(quantity);
+    const disc = (check.discount / 100) * (checkItems.price * Number(quantity));
+    payload.sub_total_price = Number(quantity) * checkItems.price - disc;
+  }
+
+  if (discount) {
+    payload.discount = Number(discount);
+    const disc = (Number(discount) / 100) * (checkItems.price * check.quantity);
+    payload.sub_total_price = checkItems.price * check.quantity - disc;
+
+    if (quantity) {
+      const disc =
+        (Number(discount) / 100) * (checkItems.price * Number(quantity));
+      payload.sub_total_price = checkItems.price * Number(quantity) - disc;
+    }
+  }
 
   try {
     const receipt_items = await prisma.receipt_items.update({
@@ -277,8 +320,9 @@ async function Update(req, res) {
     res.status(200).json(resp);
     return;
   } catch (error) {
-    let resp = ResponseTemplate(null, "internal server error", error, 500);
-    res.status(500).json(resp);
+    // let resp = ResponseTemplate(null, "internal server error", error, 500);
+    // res.status(500).json(resp);
+    console.log(error);
     return;
   }
 }
