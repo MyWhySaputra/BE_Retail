@@ -203,7 +203,7 @@ async function forgetPassword(req, res) {
       },
     });
 
-    if (checkKasir === null) {
+    if (checkKasir === null || checkKasir.deletedAt !== null) {
       let resp = ResponseTemplate(null, "email not found", null, 400);
       res.status(400).json(resp);
       return;
