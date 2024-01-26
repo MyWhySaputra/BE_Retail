@@ -10,20 +10,19 @@ async function Insert(req, res) {
   const payload = {};
 
   try {
-
     const checkReceipt = await prisma.receipt.findUnique({
       where: {
-        code: code
-      }
-    })
+        code: code,
+      },
+    });
 
-    if (checkReceipt ===  null || checkReceipt.deletedAt !== null) {
+    if (checkReceipt === null || checkReceipt.deletedAt !== null) {
       let resp = ResponseTemplate(null, "data not found", null, 404);
       res.status(404).json(resp);
       return;
     }
 
-    payload.code = `Trx${checkReceipt.id}`
+    payload.code = `Trx${checkReceipt.id}`;
 
     const totalPrice = await prisma.receipt_items.aggregate({
       _sum: {
@@ -137,7 +136,21 @@ async function Get(req, res) {
 
   const payload = {};
 
-  if (code) payload.code = code;
+  if (code) {
+    const checkReceipt = await prisma.receipt.findUnique({
+      where: {
+        code: code,
+      },
+    });
+
+    if (checkReceipt === null || checkReceipt.deletedAt !== null) {
+      let resp = ResponseTemplate(null, "data not found", null, 404);
+      res.status(404).json(resp);
+      return;
+    }
+
+    payload.code = code;
+  }
   if (total_price) payload.total_price = Number(total_price);
   if (cash) payload.cash = Number(cash);
   if (cash_refund) payload.cash_refund = Number(cash_refund);
@@ -210,6 +223,18 @@ async function Update(req, res) {
   const { cash, member_id } = req.body;
   const { id } = req.params;
 
+  const checkreceipt = await prisma.receipt.findUnique({
+    where: {
+      id: Number(id),
+    },
+  });
+
+  if (checkreceipt === null || checkreceipt.deletedAt !== null) {
+    let resp = ResponseTemplate(null, "data not found", null, 404);
+    res.status(404).json(resp);
+    return;
+  }
+
   const payload = {};
 
   if (!cash && !member_id) {
@@ -219,19 +244,15 @@ async function Update(req, res) {
   }
 
   try {
-    const checkreceipt = await prisma.receipt.findUnique({
-      where: {
-        id: Number(id),
-      },
-    });
-
-    if (checkreceipt === null) {
-      let resp = ResponseTemplate(null, "data not found", null, 404);
-      res.status(404).json(resp);
-      return;
-    }
 
     if (cash) {
+
+      if (cash < checkreceipt.total_price) {
+        let resp = ResponseTemplate(null, "cash less than total price", null, 400);
+        res.status(400).json(resp);
+        return;
+      }
+
       payload.cash = Number(cash);
       payload.cash_refund = Number(cash) - checkreceipt.total_price;
     }
@@ -243,7 +264,7 @@ async function Update(req, res) {
         },
       });
 
-      if (checkMember === null) {
+      if (checkMember === null || checkMember.deletedAt !== null) {
         let resp = ResponseTemplate(null, "data not found", null, 404);
         res.status(404).json(resp);
         return;

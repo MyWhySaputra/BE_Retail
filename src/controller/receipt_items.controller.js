@@ -31,7 +31,7 @@ async function Insert(req, res) {
       },
     });
 
-    if (checkItems === null) {
+    if (checkItems === null || checkItems.deletedAt !== null) {
       let resp = ResponseTemplate(null, "items not found", null, 404);
       res.status(404).json(resp);
       return;
@@ -250,7 +250,7 @@ async function Update(req, res) {
     },
   });
 
-  if (check === null) {
+  if (check === null || check.deletedAt !== null) {
     let resp = ResponseTemplate(null, "data not found", null, 404);
     res.status(404).json(resp);
     return;

@@ -7,7 +7,7 @@ const {
   forgetPassword,
   resetPassword,
 } = require("../../controller/auth.controller");
-const { CheckLogin, CheckForgot } = require("../../middleware/middleware");
+const { midd_register, midd_login, midd_forget } = require("../../middleware/middleware");
 
 // const path = require("path");
 
@@ -39,7 +39,7 @@ const multer = require("multer")();
  *                identity_type:
  *                  type: string
  *                identity_number:
- *                  type: integer
+ *                  type: string
  *                address:
  *                  type: string
  *     responses:
@@ -53,6 +53,7 @@ const multer = require("multer")();
 router.post(
   "/auth/register",
   multer.single("profile_picture"),
+  midd_register,
   Register
 );
 
@@ -80,7 +81,7 @@ router.post(
  *       400:
  *         description: Bad request
  */
-router.post("/auth/login", CheckLogin, login);
+router.post("/auth/login", midd_login, login);
 
 router.get("/auth/verify-email", verifyEmail);
 
@@ -106,7 +107,7 @@ router.get("/auth/verify-email", verifyEmail);
  *       400:
  *         description: Bad request
  */
-router.post("/auth/forget-password", CheckForgot, forgetPassword);
+router.post("/auth/forget-password", midd_forget, forgetPassword);
 
 // router.get("/auth/reset-password", (req, res) => {
 //   const token = req.query.token;

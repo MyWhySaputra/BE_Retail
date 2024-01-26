@@ -104,6 +104,18 @@ async function Update(req, res) {
     req.body;
   const { id } = req.params;
 
+  const checkItems = await prisma.items.findUnique({
+    where: {
+      id: Number(id),
+    }
+  })
+
+  if (checkItems === null || checkItems.deletedAt !== null) {
+    let resp = ResponseTemplate(null, "data not found", null, 404);
+    res.status(404).json(resp);
+    return;
+  }
+
   const payload = {};
 
   if (!name && !price) {

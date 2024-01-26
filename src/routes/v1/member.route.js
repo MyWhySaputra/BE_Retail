@@ -6,7 +6,13 @@ const {
   Update,
   Delete,
 } = require("../../controller/member.controller");
-const { Auth } = require("../../middleware/middleware");
+const {
+  Auth,
+  midd_id,
+  midd_memberRegister,
+  midd_memberGet,
+  midd_memberUpdate,
+} = require("../../middleware/middleware");
 
 /**
  * @swagger
@@ -40,7 +46,7 @@ const { Auth } = require("../../middleware/middleware");
  *       500:
  *         description: Internal server error
  */
-router.post("/member/", Auth, Register);
+router.post("/member/", Auth, midd_memberRegister, Register);
 
 /**
  * @swagger
@@ -81,14 +87,14 @@ router.post("/member/", Auth, Register);
  *         required: false
  *         description: The total_point of Member
  *         schema:
- *           type: string
+ *           type: integer
  *     responses:
  *       200:
  *         description: Successful response
  *       404:
  *         description: Not found
  */
-router.get("/member/", Auth, Get);
+router.get("/member/", Auth, midd_memberGet, Get);
 
 /**
  * @swagger
@@ -105,7 +111,7 @@ router.get("/member/", Auth, Get);
  *         required: true
  *         description: The id of Member
  *         schema:
- *           type: string
+ *           type: integer
  *     requestBody:
  *        required: true
  *        content:
@@ -122,14 +128,14 @@ router.get("/member/", Auth, Get);
  *                address:
  *                  type: string
  *                total_point:
- *                  type: string
+ *                  type: integer
  *     responses:
  *       200:
  *         description: Successful response
  *       400:
  *         description: Bad request
  */
-router.put("/member/:id", Auth, Update);
+router.put("/member/:id", Auth, midd_id, midd_memberUpdate, Update);
 
 /**
  * @swagger
@@ -146,13 +152,13 @@ router.put("/member/:id", Auth, Update);
  *         required: true
  *         description: The id of Member
  *         schema:
- *           type: string
+ *           type: integer
  *     responses:
  *       200:
  *         description: Successful response
  *       404:
  *         description: Not found
  */
-router.delete("/member/:id", Auth, Delete);
+router.delete("/member/:id", Auth, midd_id, Delete);
 
 module.exports = router;

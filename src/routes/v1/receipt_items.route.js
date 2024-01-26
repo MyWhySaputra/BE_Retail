@@ -7,7 +7,13 @@ const {
   Update,
   Delete,
 } = require("../../controller/receipt_items.controller");
-const { Auth } = require("../../middleware/middleware");
+const {
+  Auth,
+  midd_id,
+  midd_receipt_itemInsert,
+  midd_receipt_itemGet,
+  midd_receipt_itemUpdate,
+} = require("../../middleware/middleware");
 
 /**
  * @swagger
@@ -26,11 +32,11 @@ const { Auth } = require("../../middleware/middleware");
  *              type: object
  *              properties:
  *                item_id:
- *                  type: string
+ *                  type: integer
  *                quantity:
- *                  type: string
+ *                  type: integer
  *                discount:
- *                  type: string
+ *                  type: integer
  *     responses:
  *       200:
  *         description: Successful response
@@ -39,7 +45,7 @@ const { Auth } = require("../../middleware/middleware");
  *       500:
  *         description: Internal server error
  */
-router.post("/receipt_items/", Auth, Insert);
+router.post("/receipt_items/", Auth, midd_receipt_itemInsert, Insert);
 
 /**
  * @swagger
@@ -79,32 +85,32 @@ router.get("/receipt_items/cart/", Auth, GetCart);
  *         required: false
  *         description: The items_id of Receipt_items
  *         schema:
- *           type: string
+ *           type: integer
  *       - in: query
  *         name: quantity
  *         required: false
  *         description: The quantity of Receipt_items
  *         schema:
- *           type: string
+ *           type: integer
  *       - in: query
  *         name: discount
  *         required: false
  *         description: The discount of Receipt_items
  *         schema:
- *           type: string
+ *           type: integer
  *       - in: query
  *         name: sub_total_price
  *         required: false
  *         description: The sub_total_price of Receipt_items
  *         schema:
- *           type: string
+ *           type: integer
  *     responses:
  *       200:
  *         description: Successful response
  *       404:
  *         description: Not found
  */
-router.get("/receipt_items/", Auth, Get);
+router.get("/receipt_items/", Auth, midd_receipt_itemGet, Get);
 
 /**
  * @swagger
@@ -121,7 +127,7 @@ router.get("/receipt_items/", Auth, Get);
  *         required: true
  *         description: The id of Receipt_items
  *         schema:
- *           type: string
+ *           type: integer
  *     requestBody:
  *        required: true
  *        content:
@@ -130,18 +136,24 @@ router.get("/receipt_items/", Auth, Get);
  *              type: object
  *              properties:
  *                items_id:
- *                  type: string
+ *                  type: integer
  *                quantity:
- *                  type: string
+ *                  type: integer
  *                discount:
- *                  type: string
+ *                  type: integer
  *     responses:
  *       200:
  *         description: Successful response
  *       400:
  *         description: Bad request
  */
-router.put("/receipt_items/:id", Auth, Update);
+router.put(
+  "/receipt_items/:id",
+  Auth,
+  midd_id,
+  midd_receipt_itemUpdate,
+  Update
+);
 
 /**
  * @swagger
@@ -158,13 +170,13 @@ router.put("/receipt_items/:id", Auth, Update);
  *         required: true
  *         description: The id of Receipt_items
  *         schema:
- *           type: string
+ *           type: integer
  *     responses:
  *       200:
  *         description: Successful response
  *       404:
  *         description: Not found
  */
-router.delete("/receipt_items/:id", Auth, Delete);
+router.delete("/receipt_items/:id", Auth, midd_id, Delete);
 
 module.exports = router;

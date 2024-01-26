@@ -1,13 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const {
-  Get,
-  Update,
-  Delete,
-} = require("../../controller/kasir.controller");
+const { Get, Update, Delete } = require("../../controller/kasir.controller");
 const {
   Auth,
-  CheckUpdate,
+  midd_kasirGet,
+  midd_kasirUpdate,
+  midd_id,
 } = require("../../middleware/middleware");
 
 const multer = require("multer")();
@@ -58,7 +56,7 @@ const multer = require("multer")();
  *       404:
  *         description: Not found
  */
-router.get("/kasir/", Auth, Get);
+router.get("/kasir/", Auth, midd_kasirGet, Get);
 
 /**
  * @swagger
@@ -88,7 +86,7 @@ router.get("/kasir/", Auth, Get);
  *                identity_type:
  *                  type: string
  *                identity_number:
- *                  type: integer
+ *                  type: string
  *                address:
  *                  type: string
  *     responses:
@@ -100,8 +98,9 @@ router.get("/kasir/", Auth, Get);
 router.put(
   "/kasir/",
   Auth,
-  CheckUpdate,
   multer.single("profile_picture"),
+  midd_id,
+  midd_kasirUpdate,
   Update
 );
 
@@ -120,13 +119,13 @@ router.put(
  *         required: true
  *         description: The id of kasir
  *         schema:
- *           type: string
+ *           type: integer
  *     responses:
  *       200:
  *         description: Successful response
  *       404:
  *         description: Not found
  */
-router.delete("/kasir/:id", Auth, Delete);
+router.delete("/kasir/:id", Auth, midd_id, Delete);
 
 module.exports = router;

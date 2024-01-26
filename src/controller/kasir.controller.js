@@ -1,3 +1,4 @@
+const { HashPassword } = require("../helper/hash_pass_helper");
 const { ResponseTemplate } = require("../helper/template.helper");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
@@ -6,23 +7,22 @@ const imagekit = require("../lib/imagekit");
 const { DateTime } = require("luxon");
 
 async function Get(req, res) {
-  const { name, email, identity_type, identity_number, address } =
-    req.query;
+  const { name, email, identity_type, identity_number, address } = req.query;
 
   const payload = {};
-  const profile = {};
+  const every = {};
+  const profile = { every };
 
   if (name) payload.name = name;
   if (email) payload.email = email;
   if (identity_type || identity_number || address) payload.profile = profile;
-  if (identity_type) profile.identity_type = identity_type;
-  if (identity_number) profile.identity_number = identity_number;
-  if (address) profile.address = address;
+  if (identity_type) every.identity_type = identity_type;
+  if (identity_number) every.identity_number = identity_number;
+  if (address) every.address = address;
 
   payload.deletedAt = null;
 
   try {
-
     const kasir = await prisma.kasir.findMany({
       where: payload,
       select: {
@@ -67,6 +67,18 @@ async function Update(req, res) {
     req.body;
   const id = req.user.id;
 
+  const checkKasir = await prisma.kasir.findUnique({
+    where: {
+      id: Number(id),
+    }
+  })
+
+  if (checkKasir === null || checkKasir.deletedAt !== null) {
+    let resp = ResponseTemplate(null, "data not found", null, 404);
+    res.status(404).json(resp);
+    return;
+  }
+
   const payload = {};
   const data = {};
   const where = { kasir_id: Number(id) };
@@ -89,7 +101,10 @@ async function Update(req, res) {
 
   if (name) payload.name = name;
   if (email) payload.email = email;
-  if (password) payload.password = password;
+  if (password) {
+    const hashPass = await HashPassword(password);
+    payload.password = hashPass;
+  }
   if (identity_type || identity_number || address) payload.profile = profile;
   if (identity_type) data.identity_type = identity_type;
   if (identity_number) data.identity_number = identity_number;

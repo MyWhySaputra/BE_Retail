@@ -6,7 +6,7 @@ const {
   Update,
   Delete,
 } = require("../../controller/items.controller");
-const { Auth } = require("../../middleware/middleware");
+const { Auth, midd_id, midd_itemInsert, midd_itemGet, midd_itemUpdate } = require("../../middleware/middleware");
 
 /**
  * @swagger
@@ -27,7 +27,7 @@ const { Auth } = require("../../middleware/middleware");
  *                name:
  *                  type: string
  *                price:
- *                  type: string
+ *                  type: integer
  *     responses:
  *       200:
  *         description: Successful response
@@ -36,7 +36,7 @@ const { Auth } = require("../../middleware/middleware");
  *       500:
  *         description: Internal server error
  */
-router.post("/items/", Auth, Create);
+router.post("/items/", Auth, midd_itemInsert, Create);
 
 /**
  * @swagger
@@ -59,14 +59,14 @@ router.post("/items/", Auth, Create);
  *         required: false
  *         description: The price of Items
  *         schema:
- *           type: string
+ *           type: integer
  *     responses:
  *       200:
  *         description: Successful response
  *       404:
  *         description: Not found
  */
-router.get("/items/", Auth, Get);
+router.get("/items/", Auth, midd_itemGet, Get);
 
 /**
  * @swagger
@@ -83,7 +83,7 @@ router.get("/items/", Auth, Get);
  *         required: true
  *         description: The id of Items
  *         schema:
- *           type: string
+ *           type: integer
  *     requestBody:
  *        required: true
  *        content:
@@ -94,14 +94,14 @@ router.get("/items/", Auth, Get);
  *                name:
  *                  type: string
  *                price:
- *                  type: string
+ *                  type: integer
  *     responses:
  *       200:
  *         description: Successful response
  *       400:
  *         description: Bad request
  */
-router.put("/items/:id", Auth, Update);
+router.put("/items/:id", Auth, midd_id, midd_itemUpdate, Update);
 
 /**
  * @swagger
@@ -118,13 +118,13 @@ router.put("/items/:id", Auth, Update);
  *         required: true
  *         description: The id of Items
  *         schema:
- *           type: string
+ *           type: integer
  *     responses:
  *       200:
  *         description: Successful response
  *       404:
  *         description: Not found
  */
-router.delete("/items/:id", Auth, Delete);
+router.delete("/items/:id", Auth, midd_id, Delete);
 
 module.exports = router;

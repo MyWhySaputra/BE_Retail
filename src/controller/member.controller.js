@@ -16,17 +16,6 @@ async function Register(req, res) {
     total_point: total_point,
   };
 
-  if (req.body.identity_type !== "KTP" && req.body.identity_type !== "SIM") {
-    let resp = ResponseTemplate(
-      null,
-      "identity type must be KTP or SIM",
-      null,
-      404
-    );
-    res.status(404).json(resp);
-    return;
-  }
-
   try {
 
     const member = await prisma.member.create({
@@ -133,6 +122,18 @@ async function Update(req, res) {
   const { name, identity_type, identity_number, address, total_point } =
     req.body;
   const { id } = req.params;
+
+  const checkMember = await prisma.member.findUnique({
+    where: {
+      id: Number(id),
+    }
+  })
+
+  if (checkMember === null || checkMember.deletedAt !== null) {
+    let resp = ResponseTemplate(null, "data not found", null, 404);
+    res.status(404).json(resp);
+    return;
+  }
 
   const payload = {};
 

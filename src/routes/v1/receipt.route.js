@@ -6,7 +6,7 @@ const {
   Update,
   Delete,
 } = require("../../controller/receipt.controller");
-const { Auth } = require("../../middleware/middleware");
+const { Auth, midd_id, midd_receiptInsert, midd_receiptGet, midd_receiptUpdate } = require("../../middleware/middleware");
 
 /**
  * @swagger
@@ -25,9 +25,9 @@ const { Auth } = require("../../middleware/middleware");
  *              type: object
  *              properties:
  *                cash:
- *                  type: string
+ *                  type: integer
  *                member_id:
- *                  type: string
+ *                  type: integer
  *     responses:
  *       200:
  *         description: Successful response
@@ -36,7 +36,7 @@ const { Auth } = require("../../middleware/middleware");
  *       500:
  *         description: Internal server error
  */
-router.post("/receipt/", Auth, Insert);
+router.post("/receipt/", Auth, midd_receiptInsert, Insert);
 
 /**
  * @swagger
@@ -59,19 +59,19 @@ router.post("/receipt/", Auth, Insert);
  *         required: false
  *         description: The total_price of Receipt
  *         schema:
- *           type: string
+ *           type: integer
  *       - in: query
  *         name: cash
  *         required: false
  *         description: The cash of Receipt
  *         schema:
- *           type: string
+ *           type: integer
  *       - in: query
  *         name: cash_refund
  *         required: false
  *         description: The cash_refund of Receipt
  *         schema:
- *           type: string
+ *           type: integer
  *       - in: query
  *         name: date
  *         required: false
@@ -83,26 +83,26 @@ router.post("/receipt/", Auth, Insert);
  *         required: false
  *         description: The point of Receipt
  *         schema:
- *           type: string
+ *           type: integer
  *       - in: query
  *         name: member_id
  *         required: false
  *         description: The member_id of Receipt
  *         schema:
- *           type: string
+ *           type: integer
  *       - in: query
  *         name: kasir_id
  *         required: false
  *         description: The kasir_id of Receipt
  *         schema:
- *           type: string
+ *           type: integer
  *     responses:
  *       200:
  *         description: Successful response
  *       404:
  *         description: Not found
  */
-router.get("/receipt/", Auth, Get);
+router.get("/receipt/", Auth, midd_receiptGet, Get);
 
 /**
  * @swagger
@@ -119,7 +119,7 @@ router.get("/receipt/", Auth, Get);
  *         required: true
  *         description: The id of Receipt
  *         schema:
- *           type: string
+ *           type: integer
  *     requestBody:
  *        required: true
  *        content:
@@ -128,16 +128,16 @@ router.get("/receipt/", Auth, Get);
  *              type: object
  *              properties:
  *                cash:
- *                  type: string
+ *                  type: integer
  *                member_id:
- *                  type: string
+ *                  type: integer
  *     responses:
  *       200:
  *         description: Successful response
  *       400:
  *         description: Bad request
  */
-router.put("/receipt/:id", Auth, Update);
+router.put("/receipt/:id", Auth, midd_id, midd_receiptUpdate, Update);
 
 /**
  * @swagger
@@ -154,13 +154,13 @@ router.put("/receipt/:id", Auth, Update);
  *         required: true
  *         description: The id of Receipt
  *         schema:
- *           type: string
+ *           type: integer
  *     responses:
  *       200:
  *         description: Successful response
  *       404:
  *         description: Not found
  */
-router.delete("/receipt/:id", Auth, Delete);
+router.delete("/receipt/:id", Auth, midd_id, Delete);
 
 module.exports = router;
