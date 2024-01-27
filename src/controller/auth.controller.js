@@ -22,17 +22,6 @@ async function Register(req, res) {
     return;
   }
 
-  if (req.body.identity_type !== "KTP" && req.body.identity_type !== "SIM") {
-    let resp = ResponseTemplate(
-      null,
-      "identity type must be KTP or SIM",
-      null,
-      404
-    );
-    res.status(404).json(resp);
-    return;
-  }
-
   try {
     const stringFile = req.file.buffer.toString("base64");
 
