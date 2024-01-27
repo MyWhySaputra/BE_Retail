@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {
-  Register,
+  register,
   login,
   verifyEmail,
   forgetPassword,
@@ -54,7 +54,7 @@ router.post(
   "/auth/register",
   multer.single("profile_picture"),
   midd_register,
-  Register
+  register
 );
 
 /**

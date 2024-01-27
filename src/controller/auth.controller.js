@@ -6,7 +6,7 @@ const imagekit = require("../lib/imagekit");
 const transporter = require("../lib/nodemailer");
 var jwt = require("jsonwebtoken");
 
-async function Register(req, res) {
+async function register(req, res) {
   const { name, email, password, identity_type, identity_number, address } =
     req.body;
 
@@ -253,7 +253,7 @@ async function resetPassword(req, res) {
 }
 
 module.exports = {
-  Register,
+  register,
   login,
   verifyEmail,
   forgetPassword,
