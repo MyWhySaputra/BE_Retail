@@ -12,9 +12,9 @@ swaggerOptions = {
   swaggerDefinition: {
     openapi: "3.0.0",
     info: {
-      title: "Backend Retail API",
+      title: "REST API Toko Retail",
       version: "1.0.0",
-      description: "Backend Retail API Documentation",
+      description: "REST API Toko Retail Documentation",
     },
     servers: [
       {
