@@ -140,13 +140,10 @@ function midd_kasirUpdate(req, res, next) {
     name: Joi.string().max(255).allow(""),
     email: Joi.string().email().allow(""),
     password: Joi.string().min(6).allow(""),
+    profile_picture: Joi.string().allow(""),
     identity_type: Joi.string().valid("KTP", "SIM").allow(""),
     identity_number: Joi.string().min(14).allow(""),
     address: Joi.string().allow(""),
-    file: Joi.object({
-      buffer: Joi.binary(),
-      originalname: Joi.string().regex(/\.(jpg|jpeg|png)$/i),
-    }).allow(null),
   });
 
   const { error } = schema.validate(req.body);
