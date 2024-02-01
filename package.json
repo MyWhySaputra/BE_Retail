@@ -33,7 +33,6 @@
     "nodemailer": "^6.9.7",
     "supertest": "^6.3.3",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui": "^5.11.0",
     "swagger-ui-dist": "^5.11.0",
     "swagger-ui-express": "^5.0.0"
   }
